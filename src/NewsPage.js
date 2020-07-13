@@ -8,8 +8,10 @@ function NewsPage() {
       <Helmet>
         <title>hamop.gr - Ειδήσεις</title>
       </Helmet>
-      <div className="container m-auto px-10 mt-10">
-        <NewsFeed/>
+      <div className="flex justify-center">
+        <div className="container mx-10 mt-10">
+          <NewsFeed/>
+        </div>
       </div>
     </div>
   );

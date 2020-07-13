@@ -105,7 +105,7 @@ function NewsFeed() {
   )
 
   return (
-    <div className="mt-10">
+    <div>
       <h1 className="font-bold text-lg mb-2 flex items-center">
         <FontAwesomeIcon icon={faPaperclip} className="mr-3"/>
         <div>Ειδήσεις Περιφέρειας Αττικής</div>
