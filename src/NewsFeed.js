@@ -1,18 +1,19 @@
 import React, {useEffect, useState} from "react";
 import ReactTimeAgo from "react-time-ago/modules/ReactTimeAgo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPaperclip, faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationCircle, faPaperclip, faSpinner} from "@fortawesome/free-solid-svg-icons";
 
 export default NewsFeed;
 
 function NewsFeed() {
   const [feedLoading, setFeedLoading] = useState(true);
+  const [feedError, setFeedError] = useState(false);
   const [feedItems, setFeedItems] = useState([]);
   const [feedDate, setFeedDate] = useState(0);
 
   const feedItemsStorageKey = "feed-items";
   const feedDateStorageKey = "feed-date";
-  const newsURL = "http://www.patt.gov.gr/site/index.php?option=com_content&view=category&id=529&Itemid=838&limitstart=0";
+  const newsURL = "https://www.patt.gov.gr/site/index.php?option=com_content&view=category&id=529&Itemid=838&limitstart=0";
 
   useEffect(() => {
     let localFeedItems = JSON.parse(localStorage.getItem(feedItemsStorageKey));
@@ -58,6 +59,9 @@ function NewsFeed() {
           setFeedLoading(false);
           setFeedItems(newFeedItems);
           setFeedDate(now);
+        })
+        .catch(error => {
+          setFeedError(true);
         });
     }
   }, []);
@@ -66,6 +70,13 @@ function NewsFeed() {
     <div className="p-5 flex items-center justify-center text-center border rounded my-5 shadow bg-white">
       <FontAwesomeIcon icon={faSpinner} spin={true} className="mr-3"/>
       <div className="italic font-bold">Φόρτωση...</div>
+    </div>
+  )
+
+  const errorNewsFeed = (
+    <div className="p-5 flex items-center justify-center text-center border rounded my-5 shadow bg-white text-red-600">
+      <FontAwesomeIcon icon={faExclamationCircle} className="mr-3"/>
+      <div className="font-bold">Πρόβλημα στη φόρτωση των ειδήσεων</div>
     </div>
   )
 
@@ -96,7 +107,7 @@ function NewsFeed() {
         <FontAwesomeIcon icon={faPaperclip} className="mr-3"/>
         <div>Ειδήσεις Περιφέρειας Αττικής</div>
       </h1>
-      {feedLoading ? loadingNewsFeed : newsFeed}
+      {feedError ? errorNewsFeed : feedLoading ? loadingNewsFeed : newsFeed}
     </div>
   )
 }
