@@ -40,7 +40,7 @@ function NewsFeed() {
           for (let i = 0; i < entries.length; i++) {
             const link = entries[i].getElementsByTagName("a")[0];
             const entryText = link.textContent.trim();
-            const entryHref = domain + link.href.replace(/https?:\/\/[^\/]+/i, "");
+            const entryHref = domain + link.href.replace(/https?:\/\/[^/]+/i, "");
             newFeedItems.push({text: entryText, href: entryHref})
           }
 
