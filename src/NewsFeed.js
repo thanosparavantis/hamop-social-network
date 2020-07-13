@@ -13,7 +13,8 @@ function NewsFeed() {
 
   const feedItemsStorageKey = "feed-items";
   const feedDateStorageKey = "feed-date";
-  const newsURL = "https://www.patt.gov.gr/site/index.php?option=com_content&view=category&id=529&Itemid=838&limitstart=0";
+  const domain = "https://www.patt.gov.gr";
+  const newsURL = "https://cors-anywhere.herokuapp.com/https://www.patt.gov.gr/site/index.php?option=com_content&view=category&id=529&Itemid=838&limitstart=0";
 
   useEffect(() => {
     let localFeedItems = JSON.parse(localStorage.getItem(feedItemsStorageKey));
@@ -39,7 +40,7 @@ function NewsFeed() {
           for (let i = 0; i < entries.length; i++) {
             const link = entries[i].getElementsByTagName("a")[0];
             const entryText = link.textContent.trim();
-            const entryHref = link.href;
+            const entryHref = domain + link.href.replace(/https?:\/\/[^\/]+/i, "");
             newFeedItems.push({text: entryText, href: entryHref})
           }
 
