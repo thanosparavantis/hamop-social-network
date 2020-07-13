@@ -83,7 +83,9 @@ function NewsFeed() {
 
   const newsFeed = (
     <div>
-      <div className="text-sm mb-5 text-gray-800">Τελευταία ενημέρωση: <ReactTimeAgo date={new Date(feedDate)} locale="el"/></div>
+      <div className="text-sm mb-5 text-gray-800">
+        Τελευταία ενημέρωση: <ReactTimeAgo date={new Date(feedDate)} locale="el"/>
+      </div>
       {
         feedItems.map(
           (feedItem) =>

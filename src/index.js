@@ -1,18 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import './tailwind.build.css'
-import App from './App';
+import HomePage from './HomePage';
 import * as serviceWorker from './serviceWorker';
 
 import JavascriptTimeAgo from 'javascript-time-ago'
 import el from 'javascript-time-ago/locale/el'
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import NavbarDesktop from "./NavbarDesktop";
+import NewsPage from "./NewsPage";
+import Helmet from "react-helmet";
 
 JavascriptTimeAgo.addLocale(el)
 
 ReactDOM.render(
   <React.StrictMode>
-    <App/>
+    <Helmet>
+      <body className="bg-gray-200 font-hamop"/>
+    </Helmet>
+    <BrowserRouter>
+      <NavbarDesktop/>
+      <Switch>
+        <Route path="/news">
+          <NewsPage/>
+        </Route>
+        <Route path="/">
+          <HomePage/>
+        </Route>
+      </Switch>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
