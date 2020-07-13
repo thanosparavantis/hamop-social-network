@@ -5,6 +5,11 @@ import './tailwind.build.css'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import JavascriptTimeAgo from 'javascript-time-ago'
+import el from 'javascript-time-ago/locale/el'
+
+JavascriptTimeAgo.addLocale(el)
+
 ReactDOM.render(
   <React.StrictMode>
     <App/>
