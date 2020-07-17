@@ -15,7 +15,7 @@ function AnnouncementsPage() {
       <div className="flex justify-center mt-10 mb-5">
         <div className="container mx-3">
           <div className="flex md:items-center items-start mb-10">
-            <img src={announcementsImage} className="mr-5"/>
+            <img src={announcementsImage} className="mr-5" alt=""/>
             <div>
               <h1 className="text-lg font-bold flex items-center mb-1">
                 <Link to="/" className="text-gray-700 md:block hidden">Αρχική Σελίδα</Link>
