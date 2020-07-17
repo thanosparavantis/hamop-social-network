@@ -1,9 +1,10 @@
 import React, {Component} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExclamationCircle, faPaperclip, faSpinner} from "@fortawesome/free-solid-svg-icons";
-import ReactTimeAgo from "react-time-ago/modules/ReactTimeAgo";
+import {faArrowCircleRight, faExclamationCircle, faSpinner} from "@fortawesome/free-solid-svg-icons";
+import Announcement from "./Announcement";
+import {Link} from "react-router-dom";
 
-class NewsFeed extends Component {
+class AnnouncementsFeed extends Component {
   constructor(props) {
     super(props);
 
@@ -16,13 +17,13 @@ class NewsFeed extends Component {
       hasError: false,
     }
 
-    this.cacheEntriesKey = "feed-entries";
-    this.cacheDateKey = "feed-date";
+    this.cacheEntriesKey = "announcements";
+    this.cacheDateKey = "announcements-date";
     this.corsURL = "https://cors-anywhere.herokuapp.com/";
     this.atticaDomain = "https://www.patt.gov.gr";
-    this.atticaEndpoint = `${this.corsURL}${this.atticaDomain}/site/index.php?option=com_content&view=category&id=529&Itemid=838&limitstart=`
+    this.atticaEndpoint = `${this.corsURL}${this.atticaDomain}/site/index.php?option=com_content&view=category&id=529&Itemid=838`
     this.centralGreeceDomain = "https://pste.gov.gr"
-    this.centralGreeceEndpoint = `${this.corsURL}${this.centralGreeceDomain}/deltia-tipou-2/page/`
+    this.centralGreeceEndpoint = `${this.corsURL}${this.centralGreeceDomain}/deltia-tipou-2/`
   }
 
   componentDidMount() {
@@ -75,37 +76,27 @@ class NewsFeed extends Component {
 
   loadEntriesFromCache() {
     let cacheEntries = localStorage.getItem(this.cacheEntriesKey);
-
-    if (cacheEntries) {
-      cacheEntries = JSON.parse(cacheEntries);
-      console.debug(`Reading cache: ${cacheEntries.length} entries found`);
-    } else {
-      cacheEntries = [];
-      console.debug(`No valid cached entries found.`);
-    }
-
     let cacheDate = localStorage.getItem(this.cacheDateKey);
-
-    if (cacheDate) {
-      cacheDate = parseInt(cacheDate);
-      console.debug(`Reading cache date: ${cacheDate}`);
-    } else {
-      cacheDate = 0;
-      console.debug(`No valid cache date found.`);
-    }
-
     const now = new Date().getTime();
     const oneDayOld = 86400000;
     const cacheLife = now - cacheDate;
     const isCacheValid = cacheLife <= oneDayOld
 
-    console.debug(`Cache validity: ${isCacheValid}`);
+    if (cacheEntries && cacheDate && isCacheValid) {
+      console.log("Cache is valid, loading entries and dates");
+      cacheEntries = JSON.parse(cacheEntries);
+      cacheDate = parseInt(cacheDate);
+    } else {
+      console.log("Cache is not valid");
+      cacheEntries = [];
+      cacheDate = 0;
+    }
 
     this.setState((state, props) => {
       return {
         entries: cacheEntries,
         cacheDate: cacheDate,
-        isCacheValid: cacheLife <= oneDayOld,
+        isCacheValid: isCacheValid,
       }
     });
   }
@@ -125,8 +116,10 @@ class NewsFeed extends Component {
     })
   }
 
-  fetchAtticaEntries(pager = 0) {
-    fetch(this.atticaEndpoint + pager)
+  fetchAtticaEntries() {
+    console.debug(`Request: ${this.atticaEndpoint}`)
+
+    fetch(this.atticaEndpoint)
       .then(response => response.text())
       .then(response => {
         const parser = new DOMParser();
@@ -150,19 +143,11 @@ class NewsFeed extends Component {
           });
         }
 
-        if (entries.length > 0 && pager < 20) {
-          console.debug(`Request: ${this.atticaEndpoint + pager}`)
-
-          this.setState((prevState, props) => {
-            return {
-              atticaBuffer: prevState.atticaBuffer.concat(newEntries),
-            }
-          });
-
-          setTimeout(() => {
-            this.fetchAtticaEntries(pager + 10);
-          }, 100);
-        }
+        this.setState((prevState, props) => {
+          return {
+            atticaBuffer: prevState.atticaBuffer.concat(newEntries),
+          }
+        });
       })
       .catch(error => {
         console.error(error);
@@ -172,8 +157,10 @@ class NewsFeed extends Component {
       });
   }
 
-  fetchCentralGreeceEntries(pager = 1) {
-    fetch(this.centralGreeceEndpoint + pager)
+  fetchCentralGreeceEntries() {
+    console.debug(`Request: ${this.centralGreeceEndpoint}`)
+
+    fetch(this.centralGreeceEndpoint)
       .then(response => response.text())
       .then(response => {
         const parser = new DOMParser();
@@ -197,19 +184,11 @@ class NewsFeed extends Component {
           });
         }
 
-        if (entries.length > 0 && pager < 3) {
-          console.debug(`Request: ${this.centralGreeceEndpoint + pager}`)
-
-          this.setState((prevState, props) => {
-            return {
-              centralGreeceBuffer: prevState.centralGreeceBuffer.concat(newEntries),
-            }
-          });
-
-          setTimeout(() => {
-            this.fetchCentralGreeceEntries(pager + 1);
-          }, 100);
-        }
+        this.setState((prevState, props) => {
+          return {
+            centralGreeceBuffer: prevState.centralGreeceBuffer.concat(newEntries),
+          }
+        });
       })
       .catch(error => {
         console.error(error);
@@ -220,52 +199,44 @@ class NewsFeed extends Component {
   }
 
   render() {
-    if (this.state.error) {
+    if (this.state.hasError) {
       return (
-        <div className="p-5 flex items-center justify-center text-center border rounded my-5 shadow bg-white text-red-600">
+        <div className="p-5 text-sm flex items-center justify-center text-center border rounded my-5 shadow bg-white text-red-600">
           <FontAwesomeIcon icon={faExclamationCircle} className="mr-3"/>
-          <div className="font-bold">Πρόβλημα στη φόρτωση των ειδήσεων</div>
+          <div className="font-bold">
+            Πρόβλημα στη φόρτωση των ανακοινώσεων
+          </div>
         </div>
       )
     } else if (!this.state.entries.length) {
       return (
-        <div className="p-5 flex items-center justify-center text-center border rounded my-5 shadow bg-white">
+        <div className="p-5 text-sm flex items-center justify-center text-center border rounded my-5 shadow bg-white">
           <FontAwesomeIcon icon={faSpinner} spin={true} className="mr-3"/>
-          <div className="italic font-bold">Φόρτωση...</div>
+          <div className="font-bold">
+            Φόρτωση...
+          </div>
+        </div>
+      )
+    } else if (this.props.truncated && this.state.entries.length > 5) {
+      const topFiveEntries = this.state.entries.slice(0, 5);
+      const total = this.state.entries.length - 5
+      return (
+        <div className="bg-white shadow rounded">
+          {topFiveEntries.map((entry) => <Announcement key={entry.href} entry={entry}/>)}
+          <Link to="/announcements" className="p-5 text-center flex items-center justify-center text-sm font-bold text-gray-800">
+            <div>Διαβάστε ακόμη {total} ανακοινώσεις</div>
+            <FontAwesomeIcon icon={faArrowCircleRight} className="ml-2"/>
+          </Link>
         </div>
       )
     } else {
       return (
-        <div>
-          <h1 className="font-bold text-lg mb-2 flex items-center">
-            <FontAwesomeIcon icon={faPaperclip} className="mr-3"/>
-            <div>Ειδήσεις</div>
-          </h1>
-          <div className="text-sm mb-5 text-gray-800">
-            Τελευταία ενημέρωση: <ReactTimeAgo date={new Date(this.state.cacheDate)} locale="el"/>
-          </div>
-          {
-            this.state.entries.map(
-              (entry) =>
-                <div key={entry.href} className="border rounded my-5 shadow bg-white">
-                  <a href={entry.href} className="block p-5 border-b">
-                    {entry.text}
-                  </a>
-                  <div className="flex items-center p-5 text-sm text-gray-700">
-                    <div className="mr-5">
-                      <ReactTimeAgo date={new Date(entry.date)} locale="el"/>
-                    </div>
-                    <div>
-                      {entry.region}
-                    </div>
-                  </div>
-                </div>
-            )
-          }
+        <div className="bg-white shadow rounded">
+          {this.state.entries.map((entry) => <Announcement key={entry.href} entry={entry}/>)}
         </div>
       )
     }
   }
 }
 
-export default NewsFeed;
+export default AnnouncementsFeed;
