@@ -53,14 +53,14 @@ function UserProfilePage() {
       <>
         <PageSettings title={user.username}/>
         <Navigation/>
-        <main className="flex items-center justify-center mt-5">
+        <main className="flex items-center justify-center mt-5 mb-10">
           <div className="bg-white shadow rounded p-16">
-            <div className="flex items-center justify-center flex-col">
-              <img src={photo} alt={user.username} className="h-44 rounded-full shadow-lg"/>
-              <h1 className="mt-10 text-3xl font-bold">
+            <div className="flex items-center justify-center flex-col text-center">
+              <img src={photo} alt={user.username} className="h-32 md:h-44 rounded-full shadow-lg"/>
+              <h1 className="mt-10 md:text-3xl font-bold">
                 {user.displayName}
               </h1>
-              <h2 className="mt-1 text-xl font-light">
+              <h2 className="mt-1 md:text-xl font-light">
                 @{user.username}
               </h2>
             </div>

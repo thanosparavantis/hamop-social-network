@@ -50,7 +50,7 @@ function MembersPage() {
       <>
         <PageSettings title="Μέλη"/>
         <Navigation/>
-        <main className="mt-10 mx-5 flex items-center flex-col">
+        <main className="mt-10 mb-10 mx-5 flex items-center flex-col">
           <div className="container">
             <h1 className="text-xl font-bold mb-1 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>
