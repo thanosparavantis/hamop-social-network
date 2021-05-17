@@ -67,6 +67,10 @@ function Navigation() {
                 <div className={`w-56 absolute text-gray-700 shadow-lg rounded-b bg-white
                                  hidden md:flex flex-col
                                  transition-all ${expanded ? "opacity-100" : "invisible opacity-0"}`}>
+                  <Link to="/" className="px-10 py-5 border-b hover:underline focus:ring">
+                    <FontAwesomeIcon icon={faHouseUser} className="mr-2"/>
+                    Αρχική
+                  </Link>
                   <Link to={`/${user.username}`} className="px-10 py-5 border-b hover:underline focus:ring">
                     <FontAwesomeIcon icon={faUserCircle} className="mr-2"/>
                     Προφίλ
