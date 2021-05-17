@@ -11,11 +11,15 @@ function HomePage() {
   const [userCount, setUserCount] = useState("-")
 
   useEffect(() => {
-    firebase.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("users")
       .onSnapshot(querySnapshot => {
         setUserCount(querySnapshot.size)
       })
+
+    return () => {
+      unsubscribe()
+    }
   }, [])
 
   return (
