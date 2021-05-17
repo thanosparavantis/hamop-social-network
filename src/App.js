@@ -71,8 +71,10 @@ function App() {
 
       setUser({
         ...user,
+        valid: true,
         loggedIn: parsedUser.loggedIn,
         uid: parsedUser.uid,
+        username: parsedUser.username,
         displayName: parsedUser.displayName,
         email: parsedUser.email,
         photoURL: parsedUser.photoURL,
@@ -107,25 +109,33 @@ function App() {
   }, [user])
 
   useEffect(() => {
-    if (user.loggedIn && !user.valid) {
-      firebase.firestore()
-        .collection("users")
-        .doc(user.uid)
-        .onSnapshot(doc => {
-          const data = doc.data()
+    if (!user.loggedIn || user.valid) {
+      return
+    }
 
-          if (!data) {
-            return
-          }
+    const unsubscribe = firebase.firestore()
+      .collection("users")
+      .doc(user.uid)
+      .onSnapshot(doc => {
+        const data = doc.data()
 
-          const username = data.username
+        if (!data) {
+          return
+        }
 
-          setUser({
-            ...user,
-            valid: true,
-            username: username,
-          })
+        console.log(data)
+
+        const username = data.username
+
+        setUser({
+          ...user,
+          valid: true,
+          username: username,
         })
+      })
+
+    return () => {
+      unsubscribe()
     }
   }, [user])
 

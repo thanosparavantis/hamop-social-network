@@ -15,25 +15,25 @@ function UserProfilePage() {
   const [user, setUser] = useState()
 
   useEffect(() => {
-    firebase.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("users")
       .where("username", "==", username)
-      .get()
-      .then(querySnapshot => {
+      .onSnapshot(querySnapshot => {
         if (querySnapshot.size > 0) {
           setUser(querySnapshot.docs[0].data())
         } else {
           setNotFound(true)
         }
       })
-      .catch(error => {
-        setError(error)
-      })
+    return () => {
+      unsubscribe()
+    }
   }, [username])
 
   useEffect(() => {
     if (user) {
       setLoading(false)
+      setNotFound(false)
     }
   }, [user])
 

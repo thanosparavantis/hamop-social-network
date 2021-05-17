@@ -20,7 +20,7 @@ function Navigation() {
           <div className="flex items-center">
             {user.loggedIn ? (
               <>
-                <Link to={`/${user.username}`} className="h-16 flex items-center justify-center px-5 hover:underline">
+                <Link to={`/${user.username}`} className="h-16 flex items-center justify-center px-3 hover:underline">
                   <img src={user.photoURL} alt={user.username} className="h-10 rounded-full shadow mr-3"/>
                   {user.displayName}
                 </Link>

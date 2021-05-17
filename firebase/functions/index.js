@@ -16,7 +16,7 @@ exports.createUserProfile = functions.auth.user().onCreate((user) => {
         photoURL: user.photoURL,
       })
       .then(() => {
-        functions.logger.info(`User profile created successfully: ${username}`);
+        functions.logger.info(`Created user profile: ${username}`);
       })
       .catch((error) => {
         functions.logger.error(`Error: ${error.code} - ${error.message}`);
