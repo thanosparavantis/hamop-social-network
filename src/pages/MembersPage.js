@@ -6,7 +6,7 @@ import LoadingPage from "./LoadingPage";
 import ErrorPage from "./ErrorPage";
 import UserComponent from "../UserComponent";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSignInAlt, faUsers} from "@fortawesome/free-solid-svg-icons";
+import {faUsers} from "@fortawesome/free-solid-svg-icons";
 
 function MembersPage() {
   const [loading, setLoading] = useState(true)
