@@ -9,6 +9,8 @@ import UserProfilePage from "./pages/UserProfilePage";
 import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MembersPage from "./pages/MembersPage";
+import * as timeago from "timeago.js";
+import el from "timeago.js/lib/lang/el";
 
 function App() {
   const userDefault = {
@@ -21,12 +23,15 @@ function App() {
     displayName: null,
     email: null,
     photoURL: null,
+    creationDate: null
   }
 
   const provider = new firebase.auth.GoogleAuthProvider();
 
   const [error, setError] = useState()
   const [user, setUser] = useState(userDefault)
+
+  timeago.register("el", el);
 
   function login(event) {
     event.preventDefault()
@@ -78,6 +83,7 @@ function App() {
         displayName: parsedUser.displayName,
         email: parsedUser.email,
         photoURL: parsedUser.photoURL,
+        creationDate: parsedUser.creationDate
       })
     } else {
       firebase.auth().getRedirectResult()
@@ -123,12 +129,11 @@ function App() {
             return
           }
 
-          const username = data.username
-
           setUser({
             ...user,
             valid: true,
-            username: username,
+            username: data.username,
+            creationDate: data.creationDate.toDate()
           })
         },
         error => {

@@ -52,15 +52,16 @@ function Navigation() {
         </div>
 
         {user.valid && (
+
           <div className="flex items-center">
             {user.loggedIn ? (
               <div ref={node} className="select-none">
-                <div className={`h-16 md:w-56 px-10 py-5 flex items-center justify-center transition-all
+                <div className={`h-16 md:w-56 px-10 md:px-0 py-5 flex items-center justify-center transition-all
                                  hover:underline cursor-pointer select-none
                                  ${expanded ? "bg-white text-gray-900 border-b shadow-lg" : ""}`}
                      onClick={handleClick}>
-                  <img src={user.photoURL} alt={user.username} className="h-10 rounded-full shadow mr-3"/>
-                  {user.username}
+                  <img src={user.photoURL} alt={user.username} className="h-10 rounded shadow mr-3"/>
+                  {user.displayName}
                 </div>
 
                 {/* Desktop Logged In */}

@@ -14,10 +14,10 @@ function MembersPage() {
   const [users, setUsers] = useState()
 
   useEffect(() => {
-    firebase.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("users")
-      .get()
-      .then((querySnapshot) => {
+      .orderBy("creationDate", "desc")
+      .onSnapshot(querySnapshot => {
           setUsers(querySnapshot.docs.map(doc => {
             const data = doc.data()
 
@@ -26,13 +26,17 @@ function MembersPage() {
               username: data.username,
               displayName: data.displayName,
               photoURL: data.photoURL,
+              creationDate: data.creationDate.toDate()
             }
           }))
+        },
+        error => {
+          setError(error)
         }
       )
-      .catch(error => {
-        setError(error)
-      })
+    return () => {
+      unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
@@ -58,7 +62,7 @@ function MembersPage() {
             </h1>
 
             <p className="mb-10 text-gray-800">
-              Όλα τα εγγεγραμμένα μέλη στο hamop.gr.
+              Εξερευνήστε την κοινότητα του Hamop.gr
             </p>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

@@ -14,6 +14,7 @@ exports.createUserProfile = functions.auth.user().onCreate((user) => {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
+        creationDate: admin.firestore.Timestamp.now(),
       })
       .then(() => {
         functions.logger.info(`Created user profile: ${username}`);
