@@ -3,11 +3,12 @@ import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {useEffect, useState} from "react";
 import firebase from "firebase";
 import UserContext from "./UserContext";
-import LoadingPage from "./home/LoadingPage";
-import HomePage from "./home/HomePage";
-import UserProfilePage from "./home/UserProfilePage";
-import ErrorPage from "./home/ErrorPage";
-import NotFoundPage from "./home/NotFoundPage";
+import LoadingPage from "./pages/LoadingPage";
+import HomePage from "./pages/HomePage";
+import UserProfilePage from "./pages/UserProfilePage";
+import ErrorPage from "./pages/ErrorPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import MembersPage from "./pages/MembersPage";
 
 function App() {
   const userDefault = {
@@ -145,6 +146,9 @@ function App() {
             <Switch>
               <Route path="/" exact>
                 <HomePage/>
+              </Route>
+              <Route path="/members" exact>
+                <MembersPage/>
               </Route>
               <Route path="/:username" exact>
                 <UserProfilePage/>

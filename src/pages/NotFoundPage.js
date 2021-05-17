@@ -6,7 +6,7 @@ function NotFoundPage() {
     <>
       <PageSettings/>
       <Navigation/>
-      <main className="flex items-center justify-center flex-col text-center" style={{height: "calc(100vh - 64px)"}}>
+      <main className="full-height-adjusted flex items-center justify-center flex-col text-center">
         <h1 className="text-3xl text-gray-900 font-bold mb-2">
           hamop.gr
         </h1>

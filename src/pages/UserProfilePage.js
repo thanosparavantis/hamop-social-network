@@ -28,7 +28,6 @@ function UserProfilePage() {
       })
       .catch(error => {
         setError(error)
-        setLoading(false)
       })
   }, [username])
 
@@ -40,10 +39,10 @@ function UserProfilePage() {
 
   if (notFound) {
     return <NotFoundPage/>
-  } else if (loading) {
-    return <LoadingPage/>
   } else if (error) {
     return <ErrorPage error={error}/>
+  } else if (loading) {
+    return <LoadingPage/>
   } else {
     const photo = user.photoURL.replace('s96', 's400')
 
@@ -51,14 +50,14 @@ function UserProfilePage() {
       <>
         <PageSettings title={user.username}/>
         <Navigation/>
-        <main className="flex items-center justify-center mt-10">
-          <div className="container bg-white shadow rounded p-10">
+        <main className="full-height-adjusted flex items-center justify-center">
+          <div className="bg-white shadow rounded p-16">
             <div className="flex items-center justify-center flex-col">
-              <img src={photo} alt={user.username} className="h-48 rounded-full shadow-lg"/>
-              <h1 className="mt-5 text-3xl font-bold">
+              <img src={photo} alt={user.username} className="h-44 rounded-full shadow-lg"/>
+              <h1 className="mt-10 text-3xl font-bold">
                 {user.displayName}
               </h1>
-              <h2 className="text-xl font-light">
+              <h2 className="mt-1 text-xl font-light">
                 @{user.username}
               </h2>
             </div>
