@@ -18,7 +18,16 @@ function MembersPage() {
       .collection("users")
       .get()
       .then((querySnapshot) => {
-          setUsers(querySnapshot.docs.map(doc => doc.data()))
+          setUsers(querySnapshot.docs.map(doc => {
+            const data = doc.data()
+
+            return {
+              uid: doc.id,
+              username: data.username,
+              displayName: data.displayName,
+              photoURL: data.photoURL,
+            }
+          }))
         }
       )
       .catch(error => {
@@ -37,12 +46,11 @@ function MembersPage() {
   } else if (loading) {
     return <LoadingPage/>
   } else {
-    console.log(users)
     return (
       <>
         <PageSettings title="Μέλη"/>
         <Navigation/>
-        <main className="mt-10 flex items-center flex-col">
+        <main className="mt-10 mx-5 flex items-center flex-col">
           <div className="container">
             <h1 className="text-xl font-bold mb-1 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>
@@ -53,9 +61,11 @@ function MembersPage() {
               Όλα τα εγγεγραμμένα μέλη στο hamop.gr.
             </p>
 
-            {users.map(user => (
-              <UserComponent user={user} key={user.uid}/>
-            ))}
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              {users.map(user => (
+                <UserComponent user={user} key={user.uid}/>
+              ))}
+            </div>
           </div>
         </main>
       </>

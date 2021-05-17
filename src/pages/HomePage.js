@@ -12,7 +12,7 @@ function HomePage() {
     <>
       <Navigation/>
       <PageSettings title="Home"/>
-      <main className="flex items-center flex-col text-center mt-10">
+      <main className="mx-5 flex items-center flex-col text-center mt-10">
         <div className="container bg-white shadow rounded p-10">
           <h1 className="text-2xl font-bold mb-3">Καλοσωρίσατε στο Hamop.gr</h1>
           <h2 className="text-2xl font-light">Η πρώτη εφαρμογή κοινωνικής δικτύωσης στην Ελλάδα</h2>

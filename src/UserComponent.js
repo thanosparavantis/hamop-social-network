@@ -2,8 +2,8 @@ import {Link} from "react-router-dom";
 
 function UserComponent({user}) {
   return (
-    <Link to={`/${user.username}`} className="flex items-center bg-white p-5 rounded shadow mb-3 focus:ring"
-    title="Επισκεφθείτε το προφίλ του χρήστη">
+    <Link to={`/${user.username}`} className="flex items-center bg-white p-5 rounded shadow focus:ring"
+    title={`Επισκεφθείτε το προφίλ του ${user.displayName}`}>
       <div>
         <img src={user.photoURL} alt={user.username} className="h-16 rounded-full shadow-lg"/>
       </div>
