@@ -6,7 +6,6 @@ import firebase from "firebase";
 import UserContext from "./UserContext";
 import LoadingPage from "./home/LoadingPage";
 import HomePage from "./home/HomePage";
-import ErrorPage from "./home/ErrorPage";
 
 function App() {
   const [user, setUser] = useState({
