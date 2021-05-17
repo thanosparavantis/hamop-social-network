@@ -19,12 +19,15 @@ function UserProfilePage() {
       .collection("users")
       .where("username", "==", username)
       .onSnapshot(querySnapshot => {
-        if (querySnapshot.size > 0) {
-          setUser(querySnapshot.docs[0].data())
-        } else {
-          setNotFound(true)
-        }
-      })
+          if (querySnapshot.size > 0) {
+            setUser(querySnapshot.docs[0].data())
+          } else {
+            setNotFound(true)
+          }
+        },
+        error => {
+          setError(error)
+        })
     return () => {
       unsubscribe()
     }
@@ -50,7 +53,7 @@ function UserProfilePage() {
       <>
         <PageSettings title={user.username}/>
         <Navigation/>
-        <main className="full-height-adjusted flex items-center justify-center">
+        <main className="flex items-center justify-center mt-5">
           <div className="bg-white shadow rounded p-16">
             <div className="flex items-center justify-center flex-col">
               <img src={photo} alt={user.username} className="h-44 rounded-full shadow-lg"/>

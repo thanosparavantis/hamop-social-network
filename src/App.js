@@ -117,22 +117,23 @@ function App() {
       .collection("users")
       .doc(user.uid)
       .onSnapshot(doc => {
-        const data = doc.data()
+          const data = doc.data()
 
-        if (!data) {
-          return
-        }
+          if (!data) {
+            return
+          }
 
-        console.log(data)
+          const username = data.username
 
-        const username = data.username
-
-        setUser({
-          ...user,
-          valid: true,
-          username: username,
+          setUser({
+            ...user,
+            valid: true,
+            username: username,
+          })
+        },
+        error => {
+          setError(error)
         })
-      })
 
     return () => {
       unsubscribe()
