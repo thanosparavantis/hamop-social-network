@@ -1,39 +1,40 @@
 import GoogleFontLoader from "react-google-font-loader";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import Navigation from "./Navigation";
 import {useEffect, useState} from "react";
 import firebase from "firebase";
 import UserContext from "./UserContext";
 import LoadingPage from "./home/LoadingPage";
 import HomePage from "./home/HomePage";
+import UserProfilePage from "./home/UserProfilePage";
+import ErrorPage from "./home/ErrorPage";
 
 function App() {
-  const [user, setUser] = useState({
+  const userDefault = {
     loggedIn: false,
     valid: false,
+    uid: null,
     login: login,
     logout: logout,
     username: null,
+    displayName: null,
     email: null,
-    photo: null,
-  })
+    photoURL: null,
+  }
 
   const provider = new firebase.auth.GoogleAuthProvider();
 
-  function login() {
+  const [error, setError] = useState()
+  const [user, setUser] = useState(userDefault)
+
+  function login(event) {
+    event.preventDefault()
     firebase.auth().signInWithRedirect(provider)
   }
 
-  function logout() {
-    setUser({
-      ...user,
-      loggedIn: false,
-      valid: false,
-      username: null,
-      email: null,
-      photo: null,
-    })
+  function logout(event) {
+    event.preventDefault()
 
+    setUser(userDefault)
     localStorage.removeItem("user")
 
     firebase.auth().signOut()
@@ -44,7 +45,7 @@ function App() {
         })
       })
       .catch((error) => {
-        console.log(error)
+        setError(error)
       })
   }
 
@@ -65,16 +66,15 @@ function App() {
       setUser({
         ...user,
         loggedIn: parsedUser.loggedIn,
-        valid: true,
-        username: parsedUser.username,
+        uid: parsedUser.uid,
+        displayName: parsedUser.displayName,
         email: parsedUser.email,
-        photo: parsedUser.photo,
+        photoURL: parsedUser.photoURL,
       })
     } else {
       firebase.auth().getRedirectResult()
         .then(result => {
           if (!result.user) {
-
             if (!user.valid) {
               setUser({
                 ...user,
@@ -88,17 +88,47 @@ function App() {
           setUser({
             ...user,
             loggedIn: true,
-            valid: true,
-            username: result.user.displayName,
+            uid: result.user.uid,
+            displayName: result.user.displayName,
             email: result.user.email,
-            photo: result.user.photoURL,
+            photoURL: result.user.photoURL,
           })
         })
         .catch(error => {
-          console.log(error)
+          setError(error)
         })
     }
   }, [user])
+
+  useEffect(() => {
+    if (user.loggedIn && !user.valid) {
+      const username = createUsername(user.displayName)
+
+      firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .set({
+          username: username,
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        })
+        .then(() => {
+          setUser({
+            ...user,
+            valid: true,
+            username: username,
+          })
+        })
+        .catch((error) => {
+          setError(error)
+        })
+    }
+  }, [user])
+
+  function createUsername(displayName) {
+    return displayName.toLowerCase().replace(/[^a-z0-9]/gi,"")
+  }
 
   return (
     <UserContext.Provider value={user}>
@@ -109,17 +139,21 @@ function App() {
         }
       ]}/>
       <Router>
-        {user.valid ? (
+        {user.valid && !error ? (
           <>
-            <Navigation/>
             <Switch>
               <Route path="/" exact>
                 <HomePage/>
               </Route>
+              <Route path="/:username" exact>
+                <UserProfilePage/>
+              </Route>
             </Switch>
           </>
         ) : (
-          <LoadingPage/>
+          <>
+            {error ? <ErrorPage error={error}/> : <LoadingPage/>}
+          </>
         )}
       </Router>
     </UserContext.Provider>

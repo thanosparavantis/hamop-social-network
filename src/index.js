@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import firebase from "firebase";
 import "firebase/auth";
+import "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyARQyjjXEbXk3WnNKr-4jWbhbZ_X7zHiSU",

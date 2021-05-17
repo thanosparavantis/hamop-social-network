@@ -3,7 +3,7 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     fontFamily: {
-      'hamop': ['Source Sans Pro', 'Helvetica', 'Arial', 'sans-serif']
+      'hamop': ['Source Sans Pro', 'Helvetica', 'Arial', 'sans-serif'],
     },
     extend: {},
   },

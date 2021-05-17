@@ -9,31 +9,33 @@ function Navigation() {
 
   return (
     <nav className="h-16 shadow-lg bg-blue-500 flex items-center justify-center">
-      <div className="container text-lg text-white font-bold flex items-center justify-between">
+      <div className="container text-white font-bold flex items-center justify-between">
         <div>
-          <Link to="/" className="h-16 flex items-center justify-center px-8 bg-blue-600 hover:underline">
+          <Link to="/" className="h-16 text-lg flex items-center justify-center px-8 bg-blue-600 hover:underline">
             hamop.gr
           </Link>
         </div>
 
-        <div className="flex items-center">
-          {user.loggedIn ? (
-            <>
-              <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline">
-                <img src={user.photo} alt={user.username} className="h-10 rounded-full shadow mr-3"/>
-                {user.username}
+        {user.valid && (
+          <div className="flex items-center">
+            {user.loggedIn ? (
+              <>
+                <Link to={`/${user.username}`} className="h-16 flex items-center justify-center px-8 hover:underline">
+                  <img src={user.photoURL} alt={user.username} className="h-10 rounded-full shadow mr-3"/>
+                  {user.displayName}
+                </Link>
+                <Link to="/" className="h-16 flex items-center justify-center px-2 hover:underline" onClick={user.logout}>
+                  Αποσύνδεση
+                </Link>
+              </>
+            ) : (
+              <Link to="/" className="h-16 flex items-center justify-center px-2 hover:underline" onClick={user.login}>
+                <FontAwesomeIcon icon={faSignInAlt} className="mr-3"/>
+                Σύνδεση
               </Link>
-              <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline" onClick={user.logout}>
-                Αποσύνδεση
-              </Link>
-            </>
-          ) : (
-            <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline" onClick={user.login}>
-              <FontAwesomeIcon icon={faSignInAlt} className="mr-3"/>
-              Σύνδεση
-            </Link>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   )
