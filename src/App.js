@@ -7,6 +7,7 @@ import LoadingPage from "./home/LoadingPage";
 import HomePage from "./home/HomePage";
 import UserProfilePage from "./home/UserProfilePage";
 import ErrorPage from "./home/ErrorPage";
+import NotFoundPage from "./home/NotFoundPage";
 
 function App() {
   const userDefault = {
