@@ -30,7 +30,11 @@ function App() {
 
   function login(event) {
     event.preventDefault()
-    firebase.auth().signInWithRedirect(provider)
+    firebase.auth()
+      .signInWithRedirect(provider)
+      .catch((error) => {
+        setError(error)
+      })
   }
 
   function logout(event) {
@@ -104,33 +108,26 @@ function App() {
 
   useEffect(() => {
     if (user.loggedIn && !user.valid) {
-      const username = createUsername(user.displayName)
-
       firebase.firestore()
         .collection("users")
         .doc(user.uid)
-        .set({
-          username: username,
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL
-        })
-        .then(() => {
+        .onSnapshot(doc => {
+          const data = doc.data()
+
+          if (!data) {
+            return
+          }
+
+          const username = data.username
+
           setUser({
             ...user,
             valid: true,
             username: username,
           })
         })
-        .catch((error) => {
-          setError(error)
-        })
     }
   }, [user])
-
-  function createUsername(displayName) {
-    return displayName.toLowerCase().replace(/[^a-z0-9]/gi,"")
-  }
 
   return (
     <UserContext.Provider value={user}>
@@ -142,22 +139,20 @@ function App() {
       ]}/>
       <Router>
         {user.valid && !error ? (
-          <>
-            <Switch>
-              <Route path="/" exact>
-                <HomePage/>
-              </Route>
-              <Route path="/members" exact>
-                <MembersPage/>
-              </Route>
-              <Route path="/:username" exact>
-                <UserProfilePage/>
-              </Route>
-              <Route path="*">
-                <NotFoundPage/>
-              </Route>
-            </Switch>
-          </>
+          <Switch>
+            <Route path="/" exact>
+              <HomePage/>
+            </Route>
+            <Route path="/members" exact>
+              <MembersPage/>
+            </Route>
+            <Route path="/:username" exact>
+              <UserProfilePage/>
+            </Route>
+            <Route path="*">
+              <NotFoundPage/>
+            </Route>
+          </Switch>
         ) : (
           <>
             {error ? <ErrorPage error={error}/> : <LoadingPage/>}
