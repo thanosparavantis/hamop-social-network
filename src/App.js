@@ -149,6 +149,9 @@ function App() {
               <Route path="/:username" exact>
                 <UserProfilePage/>
               </Route>
+              <Route path="*">
+                <NotFoundPage/>
+              </Route>
             </Switch>
           </>
         ) : (
