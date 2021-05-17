@@ -6,7 +6,7 @@ admin.initializeApp();
 exports.createUserProfile = functions.auth.user().onCreate((user) => {
   const username = user.displayName.toLowerCase().replace(/[^a-z0-9]/gi, "");
 
-  admin.firestore()
+  return admin.firestore()
       .collection("users")
       .doc(user.uid)
       .set({
@@ -16,9 +16,9 @@ exports.createUserProfile = functions.auth.user().onCreate((user) => {
         photoURL: user.photoURL,
       })
       .then(() => {
-        console.log("User profile created successfully.");
+        functions.logger.info(`User profile created successfully: ${username}`);
       })
       .catch((error) => {
-        console.error(`An error occurred: ${error.code} - ${error.message}`);
+        functions.logger.error(`Error: ${error.code} - ${error.message}`);
       });
 });
