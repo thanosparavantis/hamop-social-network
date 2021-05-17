@@ -7,12 +7,6 @@ import UserContext from "./UserContext";
 
 function Navigation() {
   const user = useContext(UserContext)
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  function handleSignIn(event) {
-    event.preventDefault()
-    firebase.auth().signInWithRedirect(provider)
-  }
 
   return (
     <nav className="h-16 shadow-lg bg-blue-500 flex items-center justify-center">
@@ -31,14 +25,13 @@ function Navigation() {
                 {user.username}
               </Link>
               <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline" onClick={user.logout}>
-                Logout
+                Αποσύνδεση
               </Link>
             </>
           ) : (
-            <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline"
-                  onClick={handleSignIn}>
+            <Link to="/" className="h-16 flex items-center justify-center px-8 hover:underline" onClick={user.login}>
               <FontAwesomeIcon icon={faSignInAlt} className="mr-3"/>
-              Sign In
+              Σύνδεση
             </Link>
           )}
         </div>
