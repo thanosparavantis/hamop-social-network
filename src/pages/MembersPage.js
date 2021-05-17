@@ -50,7 +50,7 @@ function MembersPage() {
             </h1>
 
             <p className="mb-10 text-gray-800">
-              Όλα τα καταχρωημένα μέλη στο hamop.gr.
+              Όλα τα εγγεγραμμένα μέλη στο hamop.gr.
             </p>
 
             {users.map(user => (
