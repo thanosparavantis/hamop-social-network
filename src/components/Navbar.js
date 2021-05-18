@@ -4,7 +4,7 @@ import {faHouseUser, faSignInAlt, faSignOutAlt, faUserCircle, faUsers} from "@fo
 import {useContext, useEffect, useRef, useState} from "react";
 import UserContext from "../UserContext";
 
-function NavbarComponent() {
+function Navbar() {
   const user = useContext(UserContext)
   const [expanded, setExpanded] = useState(false)
   const node = useRef()
@@ -164,4 +164,4 @@ function NavbarComponent() {
   )
 }
 
-export default NavbarComponent
+export default Navbar

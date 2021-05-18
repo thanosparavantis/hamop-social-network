@@ -5,6 +5,7 @@ import App from './App';
 import firebase from "firebase";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/functions";
 import * as timeago from "timeago.js";
 import el from "timeago.js/lib/lang/el";
 

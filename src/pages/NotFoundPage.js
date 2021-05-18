@@ -1,11 +1,11 @@
-import PageSettings from "../PageSettings";
-import Navigation from "../Navigation";
+import PageMeta from "../components/PageMeta";
+import Navbar from "../components/Navbar";
 
 function NotFoundPage() {
   return (
     <>
-      <PageSettings/>
-      <Navigation/>
+      <PageMeta/>
+      <Navbar/>
       <main className="full-height-adjusted flex items-center justify-center flex-col text-center">
         <h1 className="text-3xl text-gray-900 font-bold mb-2">
           hamop.gr

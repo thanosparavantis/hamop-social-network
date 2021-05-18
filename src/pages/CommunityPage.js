@@ -1,60 +1,48 @@
-import PageSettings from "../PageSettings";
-import Navigation from "../Navigation";
-import {useEffect, useState} from "react";
+import PageMeta from "../components/PageMeta";
+import Navbar from "../components/Navbar";
+import {useEffect, useRef, useState} from "react";
 import firebase from "firebase";
-import LoadingPage from "./LoadingPage";
 import ErrorPage from "./ErrorPage";
-import UserComponent from "../UserComponent";
+import UserCard from "../components/UserCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUsers} from "@fortawesome/free-solid-svg-icons";
 
 function CommunityPage() {
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [users, setUsers] = useState()
+  const userCallback = useRef()
 
   useEffect(() => {
     const unsubscribe = firebase.firestore()
       .collection("users")
       .orderBy("creationDate", "desc")
       .onSnapshot(querySnapshot => {
-          setUsers(querySnapshot.docs.map(doc => {
-            const data = doc.data()
-
-            return {
-              uid: doc.id,
-              username: data.username,
-              displayName: data.displayName,
-              photoURL: data.photoURL,
-              creationDate: data.creationDate.toDate()
-            }
-          }))
-        },
-        error => {
-          setError(error)
-        }
+          console.debug("[CommunityPage] Updating user list.")
+          setUsers(querySnapshot.docs.map(doc => doc.id))
+        }, error => setError(error)
       )
-    return () => {
+    userCallback.current = () => {
+      console.debug("[CommunityPage] Unsubscribing from user updates.")
       unsubscribe()
     }
   }, [])
 
   useEffect(() => {
-    if (users) {
-      setLoading(false)
+    return () => {
+      if (userCallback.current) {
+        userCallback.current()
+      }
     }
-  }, [users])
+  }, [])
 
   if (error) {
     return <ErrorPage error={error}/>
-  } else if (loading) {
-    return <LoadingPage/>
   } else {
     return (
       <>
-        <PageSettings title="Κοινότητα"/>
-        <Navigation/>
-        <main className="mt-10 mb-10 mx-5 flex items-center flex-col">
+        <PageMeta title="Κοινότητα"/>
+        <Navbar/>
+        <main className="my-10 mx-5 flex items-center flex-col">
           <div className="container">
             <h1 className="text-xl font-bold mb-10 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>
@@ -62,8 +50,8 @@ function CommunityPage() {
             </h1>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              {users.map(user => (
-                <UserComponent user={user} key={user.uid}/>
+              {users && users.map(userId => (
+                <UserCard userId={userId} key={userId}/>
               ))}
             </div>
           </div>

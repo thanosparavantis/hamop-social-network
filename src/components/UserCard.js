@@ -1,9 +1,11 @@
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import firebase from "firebase";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 
-function UserCard({userId, size = "normal", className}) {
+function UserCard({userId, size = "normal", className = ""}) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [username, setUsername] = useState()
@@ -17,7 +19,7 @@ function UserCard({userId, size = "normal", className}) {
       .collection("users")
       .doc(userId)
       .onSnapshot(doc => {
-        console.debug(`[UserCard: ${userId}] Updating user details.`)
+        console.debug(`[UserCard: ${userId}] Updating user.`)
         const data = doc.data()
         if (!data) {
           return
@@ -29,48 +31,77 @@ function UserCard({userId, size = "normal", className}) {
       }, error => setError(error))
 
     userCallback.current = () => {
-      console.debug(`[UserCard: ${userId}] Unsubscribing from post updates.`)
+      console.debug(`[UserCard: ${userId}] Unsubscribing from user updates.`)
       unsubscribe()
+    }
+  }, [userId])
+
+  useEffect(() => {
+    if (username && displayName && photoURL && creationDate) {
+      setLoading(false)
+    }
+  }, [username, displayName, photoURL, creationDate])
+
+  useEffect(() => {
+    return () => {
+      if (userCallback.current) {
+        userCallback.current()
+      }
     }
   }, [])
 
-  if (size === "small") {
+  if (error) {
     return (
-      <Link to={`/${user.username}`}
-            className={`flex items-center bg-white p-3 rounded shadow focus:ring ${className}`}>
-        <div>
-          <img src={user.photoURL} alt={user.username} className="h-12 rounded shadow-lg border"/>
-        </div>
-        <div className="ml-5 text-gray-600">
-          <div className="font-bold">
-            {user.displayName}
-          </div>
-          <div className="text-xs">
-            @{user.username}
-          </div>
-        </div>
-      </Link>
+      <div className={`bg-white p-3 rounded shadow text-center font-bold text-red-600 ${className}`}>
+        {error.code}: {error.message}
+      </div>
+    )
+  } else if (loading) {
+    return (
+      <div className={`bg-white p-3 rounded shadow text-center font-bold text-gray-600 ${className}`}>
+        <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
+        Φόρτωση...
+      </div>
     )
   } else {
-    return (
-      <Link to={`/${user.username}`}
-            className={`flex items-center bg-white p-5 rounded shadow focus:ring ${className}`}>
-        <div>
-          <img src={user.photoURL} alt={user.username} className="h-20 rounded shadow-lg border"/>
-        </div>
-        <div className="ml-5">
-          <div className="text-gray-900 font-bold leading-none">
-            {user.displayName}
+    if (size === "small") {
+      return (
+        <Link to={`/${username}`}
+              className={`flex items-center bg-white p-3 rounded shadow focus:ring ${className}`}>
+          <div>
+            <img src={photoURL} alt={username} className="h-12 rounded shadow-lg border"/>
           </div>
-          <div className="text-xs mb-1 text-gray-600">
-            @{user.username}
+          <div className="ml-5 text-gray-600">
+            <div className="font-bold">
+              {displayName}
+            </div>
+            <div className="text-xs">
+              @{username}
+            </div>
           </div>
-          <p className="text-gray-600">
-            Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
-          </p>
-        </div>
-      </Link>
-    )
+        </Link>
+      )
+    } else {
+      return (
+        <Link to={`/${username}`}
+              className={`flex items-center bg-white p-5 rounded shadow focus:ring ${className}`}>
+          <div>
+            <img src={photoURL} alt={username} className="h-20 rounded shadow-lg border"/>
+          </div>
+          <div className="ml-5">
+            <div className="text-gray-900 font-bold leading-none">
+              {displayName}
+            </div>
+            <div className="text-xs mb-1 text-gray-600">
+              @{username}
+            </div>
+            <p className="text-gray-600">
+              Γράφτηκε <TimeAgo datetime={creationDate} locale="el"/>
+            </p>
+          </div>
+        </Link>
+      )
+    }
   }
 }
 

@@ -1,7 +1,6 @@
 import {useParams} from "react-router-dom";
 import firebase from "firebase";
 import {useEffect, useRef, useState} from "react";
-import LoadingPage from "./LoadingPage";
 import Navbar from "../components/Navbar";
 import PageMeta from "../components/PageMeta";
 import ErrorPage from "./ErrorPage";
@@ -10,12 +9,12 @@ import Post from "../components/Post";
 import UserCard from "../components/UserCard";
 
 
-function UserProfilePage() {
+function ProfilePage() {
   const {username} = useParams()
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [notFound, setNotFound] = useState(false)
-  const [user, setUser] = useState()
+  const [userId, setUserId] = useState()
+  const [posts, setPosts] = useState()
   let userCallback = useRef()
   let postsCallback = useRef()
 
@@ -24,20 +23,9 @@ function UserProfilePage() {
       .collection("users")
       .where("username", "==", username)
       .onSnapshot(querySnapshot => {
-          console.debug("[UserProfilePage] Updating user profile.")
-
+          console.debug("[ProfilePage] Updating user profile.")
           if (querySnapshot.size > 0) {
-            const doc = querySnapshot.docs[0]
-            const data = doc.data()
-
-            setUser({
-              uid: doc.id,
-              displayName: data.displayName,
-              username: data.username,
-              photoURL: data.photoURL,
-              creationDate: data.creationDate.toDate(),
-            })
-
+            setUserId(querySnapshot.docs[0].id)
             setNotFound(false)
           } else {
             setNotFound(true)
@@ -48,44 +36,32 @@ function UserProfilePage() {
         })
 
     userCallback.current = () => {
-      console.debug("[UserProfilePage] Unsubscribing from user profile updates.")
+      console.debug("[ProfilePage] Unsubscribing from user profile updates.")
       unsubscribe()
     }
   }, [username])
 
   useEffect(() => {
-    if (!user || user.posts) {
+    if (!userId) {
       return
     }
 
     const unsubscribe = firebase.firestore()
       .collection("posts")
-      .where("author", "==", user.uid)
+      .where("author", "==", userId)
       .orderBy("creationDate", "desc")
       .onSnapshot(querySnapshot => {
-          console.debug("[UserProfilePage] Updating user posts.")
-          const posts = querySnapshot.docs.map(doc => doc.id)
-
-          setUser(oldUser => ({
-            ...oldUser,
-            posts: posts,
-          }))
+          console.debug("[ProfilePage] Updating user posts.")
+          setPosts(querySnapshot.docs.map(doc => doc.id))
         },
         error => {
           setError(error)
         })
-
     postsCallback.current = () => {
-      console.debug("[UserProfilePage] Unsubscribing from user post updates.")
+      console.debug("[ProfilePage] Unsubscribing from user post updates.")
       unsubscribe()
     }
-  }, [user])
-
-  useEffect(() => {
-    if (user && loading && user.posts) {
-      setLoading(false)
-    }
-  }, [user, loading])
+  }, [userId])
 
   useEffect(() => {
     return () => {
@@ -103,23 +79,21 @@ function UserProfilePage() {
     return <NotFoundPage/>
   } else if (error) {
     return <ErrorPage error={error}/>
-  } else if (loading) {
-    return <LoadingPage/>
   } else {
     return (
       <>
-        <PageMeta title={user.username}/>
+        <PageMeta title={username}/>
         <Navbar/>
         <main className="my-5 mx-5 flex items-center justify-center">
-          <div className="container grid gap-10 grid-cols-4">
+          <div className="container grid gap-10 grid-cols-1 md:grid-cols-4">
             <section>
-              <UserCard user={user}/>
+              <UserCard userId={userId}/>
             </section>
 
-            <section className="col-span-3">
-              {user.posts && user.posts.length > 0 ? (
+            <section className="md:col-span-3">
+              {posts && posts.length > 0 ? (
                 <div className="w-full">
-                  {user.posts.map(postId => {
+                  {posts.map(postId => {
                     return <Post postId={postId} key={postId} className="mb-3"/>
                   })}
                 </div>
@@ -138,4 +112,4 @@ function UserProfilePage() {
   }
 }
 
-export default UserProfilePage
+export default ProfilePage

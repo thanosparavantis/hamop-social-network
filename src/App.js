@@ -4,11 +4,12 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import firebase from "firebase";
 import UserContext from "./UserContext";
 import LoadingPage from "./pages/LoadingPage";
-import HomePage from "./pages/HomePage";
-import UserProfilePage from "./pages/UserProfilePage";
+import HomeGuestPage from "./pages/HomeGuestPage";
+import ProfilePage from "./pages/ProfilePage";
 import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CommunityPage from "./pages/CommunityPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
   const [error, setError] = useState()
@@ -50,7 +51,7 @@ function App() {
   const [user, setUser] = useState(userDefault)
 
   const logout = useCallback((event = null) => {
-    console.debug("Starting logout process.")
+    console.debug("[App] Starting logout process.")
 
     if (event) {
       event.preventDefault()
@@ -62,7 +63,7 @@ function App() {
 
     firebase.auth().signOut()
       .then(() => {
-        console.debug("User logged out successfully.")
+        console.debug("[App] User logged out successfully.")
 
         setUser(oldUser => ({
           ...oldUser,
@@ -75,7 +76,7 @@ function App() {
   }, [userDefault])
 
   const updateUser = useCallback((userId, newUser) => {
-    console.debug("Updating user profile.")
+    console.debug("[App] Updating user profile.")
 
     setUser(oldUser => ({
       ...oldUser,
@@ -95,7 +96,7 @@ function App() {
   }, [logout])
 
   const setupUserSync = useCallback((userId) => {
-    console.debug("Setting up user sync.")
+    console.debug("[App] Setting up user sync.")
 
     const unsubscribe = firebase.firestore()
       .collection("users")
@@ -119,7 +120,7 @@ function App() {
         })
 
     callback.current = () => {
-      console.debug("Unsubscribing from user sync.")
+      console.debug("[App] Unsubscribing from user sync.")
       unsubscribe()
     }
   }, [updateUser, logout])
@@ -129,20 +130,20 @@ function App() {
       .then(result => {
 
         if (result.user) {
-          console.debug("Received user from redirect result.")
+          console.debug("[App] Received user from redirect result.")
 
           const userId = result.user.uid
           setupUserSync(userId)
         } else {
           const localUserId = localStorage.getItem("userId")
-          console.debug(`Local user id: ${localUserId}`)
+          console.debug(`[App] Local userId: ${localUserId}`)
 
           if (localUserId && localUserId !== "null") {
-            console.debug("Cached user, attempting login.")
+            console.debug("[App] Cached user, attempting login.")
 
             setupUserSync(localUserId)
           } else {
-            console.debug("User is not logged in.")
+            console.debug("[App] User is not logged in.")
 
             setUser(oldUser => ({
               ...oldUser,
@@ -176,13 +177,13 @@ function App() {
         {user.valid && !error ? (
           <Switch>
             <Route path="/" exact>
-              <HomePage/>
+              {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
             </Route>
             <Route path="/community" exact>
               <CommunityPage/>
             </Route>
             <Route path="/:username" exact>
-              <UserProfilePage/>
+              <ProfilePage/>
             </Route>
             <Route path="*">
               <NotFoundPage/>
