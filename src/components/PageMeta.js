@@ -1,6 +1,6 @@
 import {Helmet} from "react-helmet";
 
-function PageSettings({title}) {
+function PageMeta({title}) {
   return (
     <Helmet>
       <body className="font-hamop bg-gradient-to-r from-gray-100 to-gray-200"/>
@@ -12,4 +12,4 @@ function PageSettings({title}) {
   )
 }
 
-export default PageSettings
+export default PageMeta

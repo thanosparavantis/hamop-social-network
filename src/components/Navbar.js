@@ -2,9 +2,9 @@ import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHouseUser, faSignInAlt, faSignOutAlt, faUserCircle, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {useContext, useEffect, useRef, useState} from "react";
-import UserContext from "./UserContext";
+import UserContext from "../UserContext";
 
-function Navigation() {
+function NavbarComponent() {
   const user = useContext(UserContext)
   const [expanded, setExpanded] = useState(false)
   const node = useRef()
@@ -164,4 +164,4 @@ function Navigation() {
   )
 }
 
-export default Navigation
+export default NavbarComponent
