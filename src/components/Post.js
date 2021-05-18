@@ -95,13 +95,13 @@ function Post({postId, className = ""}) {
     )
   } else {
     return (
-      <div className="flex">
+      <div className={`flex bg-white px-5 py-4 rounded shadow ${className}`}>
         <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border mr-3"/>
-        <div className={`w-full bg-white px-5 py-3 rounded shadow ${className}`}>
+        <div>
           <div className="font-bold leading-none text-gray-900">
             {authorDisplayName}
           </div>
-          <div className="whitespace-pre my-3 text-gray-900">
+          <div className="whitespace-pre-line mt-1 mb-2 text-gray-900">
             {content}
           </div>
           <div className="text-sm text-gray-600">
