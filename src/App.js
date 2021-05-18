@@ -1,6 +1,6 @@
 import GoogleFontLoader from "react-google-font-loader";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import firebase from "firebase";
 import UserContext from "./UserContext";
 import LoadingPage from "./pages/LoadingPage";
@@ -8,142 +8,161 @@ import HomePage from "./pages/HomePage";
 import UserProfilePage from "./pages/UserProfilePage";
 import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import MembersPage from "./pages/MembersPage";
-import * as timeago from "timeago.js";
-import el from "timeago.js/lib/lang/el";
+import CommunityPage from "./pages/CommunityPage";
 
 function App() {
-  const userDefault = {
-    loggedIn: false,
-    valid: false,
-    uid: null,
-    login: login,
-    logout: logout,
-    username: null,
-    displayName: null,
-    email: null,
-    photoURL: null,
-    creationDate: null
-  }
-
-  const provider = new firebase.auth.GoogleAuthProvider();
-
   const [error, setError] = useState()
-  const [user, setUser] = useState(userDefault)
+  let callback = useRef()
 
-  timeago.register("el", el);
+  const provider = useMemo(() => {
+    return new firebase.auth.GoogleAuthProvider()
+  }, []);
 
-  function login(event) {
-    event.preventDefault()
+  const login = useCallback((event = null) => {
+    console.debug("Starting login process.")
+
+    if (event) {
+      event.preventDefault()
+    }
+
     firebase.auth()
       .signInWithRedirect(provider)
       .catch((error) => {
         setError(error)
       })
-  }
+  }, [provider])
 
-  function logout(event) {
-    event.preventDefault()
+  const userDefault = useMemo(() => {
+    return {
+      login: login,
+      logout: null,
+      loggedIn: false,
+      valid: false,
+      uid: null,
+      username: null,
+      displayName: null,
+      email: null,
+      photoURL: null,
+      creationDate: null
+    }
+  }, [login])
+
+  const [user, setUser] = useState(userDefault)
+
+  const logout = useCallback((event = null) => {
+    console.debug("Starting logout process.")
+
+    if (event) {
+      event.preventDefault()
+    }
 
     setUser(userDefault)
-    localStorage.removeItem("user")
+    callback.current()
+    localStorage.removeItem("userId")
 
     firebase.auth().signOut()
       .then(() => {
-        setUser({
-          ...user,
+        console.debug("User logged out successfully.")
+
+        setUser(oldUser => ({
+          ...oldUser,
           valid: true,
-        })
+        }))
       })
       .catch((error) => {
         setError(error)
       })
-  }
+  }, [userDefault])
 
-  useEffect(() => {
-    if (user.loggedIn) {
-      localStorage.setItem("user", JSON.stringify(user))
-    }
+  const updateUser = useCallback((userId, newUser) => {
+    console.debug("Updating user profile.")
 
-    const localUser = localStorage.getItem("user")
+    setUser(oldUser => ({
+      ...oldUser,
+      login: null,
+      logout: logout,
+      loggedIn: true,
+      valid: true,
+      uid: userId,
+      username: newUser.username,
+      displayName: newUser.displayName,
+      email: newUser.email,
+      photoURL: newUser.photoURL,
+      creationDate: newUser.creationDate.toDate()
+    }))
 
-    if (localUser) {
-      if (user.loggedIn || JSON.stringify(user) === localUser) {
-        return
-      }
+    localStorage.setItem("userId", userId)
+  }, [logout])
 
-      const parsedUser = JSON.parse(localUser)
-
-      setUser({
-        ...user,
-        valid: true,
-        loggedIn: parsedUser.loggedIn,
-        uid: parsedUser.uid,
-        username: parsedUser.username,
-        displayName: parsedUser.displayName,
-        email: parsedUser.email,
-        photoURL: parsedUser.photoURL,
-        creationDate: parsedUser.creationDate
-      })
-    } else {
-      firebase.auth().getRedirectResult()
-        .then(result => {
-          if (!result.user) {
-            if (!user.valid) {
-              setUser({
-                ...user,
-                valid: true,
-              })
-            }
-
-            return
-          }
-
-          setUser({
-            ...user,
-            loggedIn: true,
-            uid: result.user.uid,
-            displayName: result.user.displayName,
-            email: result.user.email,
-            photoURL: result.user.photoURL,
-          })
-        })
-        .catch(error => {
-          setError(error)
-        })
-    }
-  }, [user])
-
-  useEffect(() => {
-    if (!user.loggedIn || user.valid) {
-      return
-    }
+  const setupUserSync = useCallback((userId) => {
+    console.debug("Setting up user sync.")
 
     const unsubscribe = firebase.firestore()
       .collection("users")
-      .doc(user.uid)
+      .doc(userId)
       .onSnapshot(doc => {
-          const data = doc.data()
+          const newUser = doc.data()
 
-          if (!data) {
-            return
+          if (newUser) {
+            updateUser(userId, newUser)
+          } else {
+            const wasLoggedIn = localStorage.getItem("userId")
+
+            if (wasLoggedIn) {
+              logout()
+            }
           }
 
-          setUser({
-            ...user,
-            valid: true,
-            username: data.username,
-            creationDate: data.creationDate.toDate()
-          })
         },
         error => {
           setError(error)
         })
 
-    return () => {
+    callback.current = () => {
+      console.debug("Unsubscribing from user sync.")
       unsubscribe()
     }
-  }, [user])
+  }, [updateUser, logout])
+
+  useEffect(() => {
+    firebase.auth().getRedirectResult()
+      .then(result => {
+
+        if (result.user) {
+          console.debug("Received user from redirect result.")
+
+          const userId = result.user.uid
+          setupUserSync(userId)
+        } else {
+          const localUserId = localStorage.getItem("userId")
+          console.debug(`Local user id: ${localUserId}`)
+
+          if (localUserId && localUserId !== "null") {
+            console.debug("Cached user, attempting login.")
+
+            setupUserSync(localUserId)
+          } else {
+            console.debug("User is not logged in.")
+
+            setUser(oldUser => ({
+              ...oldUser,
+              valid: true,
+            }))
+          }
+        }
+      })
+      .catch(error => {
+        setError(error)
+      })
+  }, [setupUserSync])
+
+  useEffect(() => {
+    return () => {
+      if (callback.current) {
+        callback.current()
+      }
+    }
+  }, [])
 
   return (
     <UserContext.Provider value={user}>
@@ -159,8 +178,8 @@ function App() {
             <Route path="/" exact>
               <HomePage/>
             </Route>
-            <Route path="/members" exact>
-              <MembersPage/>
+            <Route path="/community" exact>
+              <CommunityPage/>
             </Route>
             <Route path="/:username" exact>
               <UserProfilePage/>

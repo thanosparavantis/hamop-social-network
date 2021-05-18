@@ -8,7 +8,7 @@ import UserComponent from "../UserComponent";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUsers} from "@fortawesome/free-solid-svg-icons";
 
-function MembersPage() {
+function CommunityPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [users, setUsers] = useState()
@@ -52,18 +52,14 @@ function MembersPage() {
   } else {
     return (
       <>
-        <PageSettings title="Μέλη"/>
+        <PageSettings title="Κοινότητα"/>
         <Navigation/>
         <main className="mt-10 mb-10 mx-5 flex items-center flex-col">
           <div className="container">
-            <h1 className="text-xl font-bold mb-1 text-gray-900">
+            <h1 className="text-xl font-bold mb-10 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>
-              Λίστα μελών
+              Κοινότητα
             </h1>
-
-            <p className="mb-10 text-gray-800">
-              Εξερευνήστε την κοινότητα του Hamop.gr
-            </p>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
               {users.map(user => (
@@ -77,4 +73,4 @@ function MembersPage() {
   }
 }
 
-export default MembersPage
+export default CommunityPage

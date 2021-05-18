@@ -5,6 +5,8 @@ import App from './App';
 import firebase from "firebase";
 import "firebase/auth";
 import "firebase/firestore";
+import * as timeago from "timeago.js";
+import el from "timeago.js/lib/lang/el";
 
 const firebaseConfig = {
   apiKey: "AIzaSyARQyjjXEbXk3WnNKr-4jWbhbZ_X7zHiSU",
@@ -16,6 +18,8 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
+timeago.register("el", el);
 
 ReactDOM.render(
   <React.StrictMode>
