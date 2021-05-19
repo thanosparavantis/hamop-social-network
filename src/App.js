@@ -14,6 +14,7 @@ import AppCacheContext from "./AppCacheContext";
 import AppCache from "./AppCache";
 import AppQueries from "./AppQueries";
 import AppQueriesContext from "./AppQueriesContext";
+import PostPage from "./pages/PostPage";
 
 function App() {
   const [error, setError] = useState()
@@ -194,6 +195,9 @@ function App() {
                 </Route>
                 <Route path="/community" exact>
                   <CommunityPage/>
+                </Route>
+                <Route path="/post/:postId" exact>
+                  <PostPage/>
                 </Route>
                 <Route path="/:username" exact>
                   <ProfilePage/>

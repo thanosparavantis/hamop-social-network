@@ -5,7 +5,8 @@ export default class AppCache {
   }
 
   isCached(itemId) {
-    return this.getItem(itemId) !== null
+    const item = JSON.parse(sessionStorage.getItem(itemId))
+    return item !== null
   }
 
   getItem(itemId) {

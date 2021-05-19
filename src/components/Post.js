@@ -2,7 +2,7 @@ import TimeAgo from "timeago-react";
 import {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import AppCacheContext from "../AppCacheContext";
 import {Link} from "react-router-dom";
 
@@ -31,8 +31,10 @@ function Post({postId, className = ""}) {
         .then(doc => {
           const data = doc.data()
           if (!data) {
+            setError({message: "Δεν φαίνεται να υπάρχει αυτή η δημοσίευση."})
             return
           }
+
           setAuthor(data.author)
           setContent(data.content)
           setCreationDate(data.creationDate.toDate())
@@ -99,13 +101,22 @@ function Post({postId, className = ""}) {
 
   if (error) {
     return (
-      <div className={`bg-white px-5 py-3 rounded shadow text-center font-bold text-red-600 ${className}`}>
-        {error.code}: {error.message}
+      <div className={`bg-white p-5 rounded shadow font-bold text-red-600 text-center ${className}`}>
+        {error.code && (
+          <div>
+            {error.code}
+          </div>
+        )}
+
+        <div>
+          <FontAwesomeIcon icon={faExclamationTriangle} className="mr-3"/>
+          {error.message}
+        </div>
       </div>
     )
   } else if (loading) {
     return (
-      <div className={`bg-white px-5 py-3 rounded shadow text-center font-bold text-gray-600 ${className}`}>
+      <div className={`bg-white p-5 rounded shadow text-center font-bold text-gray-600 ${className}`}>
         <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
         Φόρτωση...
       </div>
@@ -113,17 +124,19 @@ function Post({postId, className = ""}) {
   } else {
     return (
       <div className={`flex flex-col align-top bg-white p-5 rounded shadow ${className}`}>
-        <Link to={`/${authorUsername}`} className="flex items-center flex-shrink-0">
-          <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border"/>
+        <div className="flex items-center flex-shrink-0">
+          <Link to={`/${authorUsername}`} className="block hover:opacity-80">
+            <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border"/>
+          </Link>
           <div className="ml-3 flex flex-col">
-            <div className="font-bold leading-none text-gray-900">
+            <Link to={`/${authorUsername}`} className="block font-bold leading-none text-gray-900 hover:underline">
               {authorDisplayName}
-            </div>
-            <div className="text-sm text-gray-600">
+            </Link>
+            <Link to={`/post/${postId}`} className="block mt-1 text-sm text-gray-600 hover:underline">
               <TimeAgo datetime={creationDate} locale="el"/>
-            </div>
+            </Link>
           </div>
-        </Link>
+        </div>
         <div className="mt-3">
           <div className="whitespace-pre-line text-gray-900">
             {content}
