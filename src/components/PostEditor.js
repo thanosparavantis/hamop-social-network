@@ -5,7 +5,6 @@ import {faCheck, faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons
 
 function PostEditor() {
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState()
   const [contentField, setContentField] = useState("")
 
@@ -13,16 +12,13 @@ function PostEditor() {
     setContentField(event.target.value)
   }, [])
 
+  const isContentFieldValid = useCallback(() => {
+    return contentField.length > 0 && contentField.length <= 300;
+  }, [contentField])
+
   const handleSubmit = useCallback(event => {
     event.preventDefault()
     setError(false)
-    setSuccess(false)
-
-    if (contentField.length === 0) {
-      setError("Πρέπει να γράψετε κάτι στην δημοσίευσή σας.")
-      return
-    }
-
     setLoading(true)
 
     const createPost = firebase.functions().httpsCallable("createPost")
@@ -33,7 +29,6 @@ function PostEditor() {
 
         if (data.success) {
           setLoading(false)
-          setSuccess(true)
           setContentField("")
         }
       })
@@ -43,21 +38,16 @@ function PostEditor() {
       })
   }, [contentField])
 
-  const clearMessages = useCallback(event => {
-    setError(false)
-    setSuccess(false)
-  }, [])
-
   return (
     <form action="#" method="POST">
       <div>
         <textarea
-          className="h-20 w-full border rounded p-3 shadow-lg bg-white disabled:opacity-50
+          className="h-28 w-full border rounded p-3 shadow-lg bg-white disabled:opacity-50
                      text-gray-900 focus:ring outline-none resize-none"
           placeholder="Γράψτε εδώ ότι σκέφτεστε..."
           onChange={handleContentField}
-          onFocus={clearMessages}
           value={contentField}
+          maxLength="300"
           disabled={loading}
           required={true}
         >
@@ -66,10 +56,10 @@ function PostEditor() {
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
         <div className="font-bold mb-3 md:mb-0 text-center md:text-left">
-          {success && (
-            <p className="text-green-600">
-              <FontAwesomeIcon icon={faCheck} className="mr-2"/>
-              Επιτυχία
+
+          {!error && (
+            <p className="text-gray-700">
+              Απομένουν {300 - contentField.length} χαρακτήρες
             </p>
           )}
 
@@ -83,7 +73,7 @@ function PostEditor() {
         <button className="px-6 py-2 rounded shadow font-bold text-white hover:bg-green-500 w-full md:w-auto
                            bg-green-400 focus:ring outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
-                disabled={loading}>
+                disabled={loading || !isContentFieldValid()}>
           {loading ? (
             <>
               <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>

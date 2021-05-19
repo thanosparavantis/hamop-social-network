@@ -117,8 +117,7 @@ function Post({postId, className = ""}) {
   } else if (loading) {
     return (
       <div className={`bg-white p-5 rounded shadow text-center font-bold text-gray-600 ${className}`}>
-        <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
-        Φόρτωση...
+        <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg" className="mr-3"/>
       </div>
     )
   } else {

@@ -4,7 +4,6 @@ import {useContext, useEffect, useRef, useState} from "react";
 import Navbar from "../components/Navbar";
 import PostEditor from "../components/PostEditor";
 import firebase from "firebase";
-import UserCard from "../components/UserCard";
 import ErrorPage from "./ErrorPage";
 import Post from "../components/Post";
 
@@ -49,28 +48,23 @@ function HomePage() {
       <>
         <Navbar/>
         <PageMeta title="Home"/>
-        <main className="mx-5 my-10 flex items-center justify-center">
-          <div className="container lg:grid lg:gap-10 lg:grid-cols-1 lg:grid-cols-4">
-            <section className="hidden lg:block">
-              <UserCard userId={user.uid} className="mb-10"/>
-            </section>
-            <section className="lg:col-span-3">
-              <div className="mb-10">
-                <PostEditor/>
-              </div>
+        <main className="mx-5 my-5 flex items-center justify-center">
+          <div className="container max-w-2xl">
+            <div className="mb-10">
+              <PostEditor/>
+            </div>
 
-              {posts && posts.length > 0 ? (
-                <div className="w-full">
-                  {posts.map(postId => {
-                    return <Post key={postId} postId={postId} className="mb-3"/>
-                  })}
-                </div>
-              ) : (
-                <div className="bg-white px-5 py-3 rounded shadow">
-                  Δεν φαίνεται να υπάρχει κάτι εδώ.
-                </div>
-              )}
-            </section>
+            {posts && posts.length > 0 ? (
+              <>
+                {posts.map(postId => {
+                  return <Post key={postId} postId={postId} className="mb-3"/>
+                })}
+              </>
+            ) : (
+              <div className="bg-white px-5 py-3 rounded shadow">
+                Δεν φαίνεται να υπάρχει κάτι εδώ.
+              </div>
+            )}
           </div>
         </main>
       </>

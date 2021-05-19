@@ -43,17 +43,15 @@ function CommunityPage() {
         <PageMeta title="Κοινότητα"/>
         <Navbar/>
         <main className="my-10 mx-5 flex items-center flex-col">
-          <div className="container">
-            <h1 className="text-xl font-bold mb-10 text-gray-900">
+          <div className="container max-w-2xl">
+            <h1 className="text-xl font-bold mb-5 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>
               Κοινότητα
             </h1>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              {users && users.map(userId => (
-                <UserCard userId={userId} key={userId}/>
-              ))}
-            </div>
+            {users && users.map(userId => (
+              <UserCard userId={userId} key={userId} className="mb-3"/>
+            ))}
           </div>
         </main>
       </>

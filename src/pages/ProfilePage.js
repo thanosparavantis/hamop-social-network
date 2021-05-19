@@ -85,16 +85,13 @@ function ProfilePage() {
         <PageMeta title={username}/>
         <Navbar/>
         <main className="my-5 mx-5 flex items-center justify-center">
-          <div className="container grid gap-10 grid-cols-1 md:grid-cols-4">
-            <section>
+          <div className="container max-w-2xl">
               {userId && (
                 <UserCard userId={userId}/>
               )}
-            </section>
 
-            <section className="md:col-span-3">
               {posts && posts.length > 0 ? (
-                <div className="w-full">
+                <div className="mt-10">
                   {posts.map(postId => {
                     return <Post postId={postId} key={postId} className="mb-3"/>
                   })}
@@ -104,7 +101,6 @@ function ProfilePage() {
                   Δεν φαίνεται να υπάρχει κάτι εδώ.
                 </div>
               )}
-            </section>
           </div>
 
         </main>

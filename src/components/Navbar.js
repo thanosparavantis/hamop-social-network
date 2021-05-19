@@ -44,7 +44,7 @@ function Navbar() {
 
   return (
     <nav className="h-16 shadow-lg bg-blue-500 flex items-center justify-center">
-      <div className="container mx-5 text-white font-bold flex items-center justify-between">
+      <div className="container max-w-2xl mx-5 text-white font-bold flex items-center justify-between">
         <div>
           <Link to="/" className="h-16 text-lg flex items-center justify-center hover:underline">
             Hamop.gr
