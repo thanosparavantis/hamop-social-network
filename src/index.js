@@ -11,7 +11,7 @@ import el from "timeago.js/lib/lang/el";
 
 const firebaseConfig = {
   apiKey: "AIzaSyARQyjjXEbXk3WnNKr-4jWbhbZ_X7zHiSU",
-  authDomain: "auth.hamop-website.gr",
+  authDomain: "auth.hamop.gr",
   projectId: "socialapp-dfa8a",
   storageBucket: "socialapp-dfa8a.appspot.com",
   messagingSenderId: "929203818625",
