@@ -91,13 +91,13 @@ function ProfilePage() {
               )}
 
               {posts && posts.length > 0 ? (
-                <div className="mt-10">
+                <div className="mt-3">
                   {posts.map(postId => {
                     return <Post postId={postId} key={postId} className="mb-3"/>
                   })}
                 </div>
               ) : (
-                <div className="bg-white px-5 py-3 rounded shadow">
+                <div className="mt-3 bg-white px-5 py-3 rounded shadow">
                   Δεν φαίνεται να υπάρχει κάτι εδώ.
                 </div>
               )}

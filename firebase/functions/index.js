@@ -3,11 +3,26 @@ const functions = require("firebase-functions")
 const admin = require("firebase-admin")
 admin.initializeApp()
 
-exports.createUserProfile = functions.auth.user().onCreate((user) => {
-  let username = user.displayName.toLowerCase().replace(/[^a-z0-9]/gi, "")
+exports.createUserProfile = functions.auth.user().onCreate(async (user) => {
+  let username = user.displayName
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gi, "")
 
   if (username.length === 0) {
     username = user.uid
+  } else {
+    try {
+      const docsRef = await admin.firestore()
+        .collection("users")
+        .where("username", "==", username)
+        .get()
+
+      if (docsRef.size > 0) {
+        username = username + docsRef.size.toString()
+      }
+    } catch (error) {
+      functions.logger.error(`Error: ${error.code} - ${error.message}`)
+    }
   }
 
   return admin.firestore()
@@ -23,7 +38,7 @@ exports.createUserProfile = functions.auth.user().onCreate((user) => {
     .then(() => {
       functions.logger.info(`Created user profile: ${username}`)
     })
-    .catch((error) => {
+    .catch(error => {
       functions.logger.error(`Error: ${error.code} - ${error.message}`)
     })
 })
@@ -32,7 +47,7 @@ exports.createPost = functions.https.onCall((data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "Πρέπει να είστε συνδεδεμένος για να εξυπηρετηθεί το αίτημά σας."
+      "Πρέπει να είστε συνδεδεμένος για να κάνετε αυτή την ενέργεια."
     )
   }
 
@@ -41,7 +56,7 @@ exports.createPost = functions.https.onCall((data, context) => {
   if (!(typeof contentField === 'string') || contentField.length === 0 || contentField.length > 300) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Η δημοσίευση δεν περιλαμβάνει ορθό περιεχόμενο."
+      "Η δημοσίευση περιλαμβάνει μη έγκυρο περιεχόμενο."
     )
   }
 

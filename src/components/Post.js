@@ -1,13 +1,15 @@
 import TimeAgo from "timeago-react";
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faCircleNotch, faExclamationTriangle, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import AppCacheContext from "../AppCacheContext";
 import {Link} from "react-router-dom";
+import UserContext from "../UserContext";
 
 function Post({postId, className = ""}) {
   const appCache = useContext(AppCacheContext)
+  const user = useContext(UserContext)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [author, setAuthor] = useState()
@@ -16,6 +18,7 @@ function Post({postId, className = ""}) {
   const [authorPhotoURL, setAuthorPhotoURL] = useState()
   const [content, setContent] = useState()
   const [creationDate, setCreationDate] = useState()
+  const [confirm, setConfirm] = useState(false)
 
   useEffect(() => {
     if (appCache.isCached(postId)) {
@@ -99,6 +102,18 @@ function Post({postId, className = ""}) {
     }
   }, [author, authorUsername, authorDisplayName, authorPhotoURL, content, creationDate])
 
+  const confirmDeletePost = useCallback(() => {
+    setConfirm(true)
+  }, [])
+
+  const deletePost = useCallback(() => {
+    firebase.firestore()
+      .collection("posts")
+      .doc(postId)
+      .delete()
+      .catch(error => setError(error))
+  }, [postId])
+
   if (error) {
     return (
       <div className={`bg-white p-5 rounded shadow font-bold text-red-600 text-center ${className}`}>
@@ -137,10 +152,25 @@ function Post({postId, className = ""}) {
           </div>
         </div>
         <div className="mt-3">
-          <div className="whitespace-pre-line text-gray-900">
+          <div className="whitespace-pre-line break-words text-gray-900">
             {content}
           </div>
         </div>
+
+        {author === user.uid && (
+          <div className="mt-3 flex items-center justify-end">
+            <button className={`px-3 py-2 rounded shadow
+                    ${confirm ? "bg-red-500 text-white" : "bg-gray-100 text-gray-600 opacity-60 hover:opacity-100"}`}
+                    title="Πατήστε εδώ για να διαγράψετε την δημοσίευση"
+                    onClick={confirm ? deletePost : confirmDeletePost}>
+              {confirm ? (
+                <FontAwesomeIcon icon={faCheckCircle}/>
+              ) : (
+                <FontAwesomeIcon icon={faTrashAlt}/>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     )
   }

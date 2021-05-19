@@ -104,12 +104,9 @@ function UserCard({userId, size = "normal", className = ""}) {
             <div className="text-gray-900 font-bold leading-none">
               {displayName}
             </div>
-            <div className="text-xs mb-1 text-gray-600">
-              @{username}
-            </div>
-            <p className="text-gray-600">
+            <div className="text-sm mt-1 text-gray-600">
               Γράφτηκε <TimeAgo datetime={creationDate} locale="el"/>
-            </p>
+            </div>
           </div>
         </Link>
       )
