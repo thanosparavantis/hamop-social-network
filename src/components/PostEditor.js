@@ -66,13 +66,6 @@ function PostEditor() {
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
         <div className="font-bold mb-3 md:mb-0 text-center md:text-left">
-          {loading && (
-            <p>
-              <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
-              Φόρτωση...
-            </p>
-          )}
-
           {success && (
             <p className="text-green-600">
               <FontAwesomeIcon icon={faCheck} className="mr-2"/>
@@ -91,7 +84,14 @@ function PostEditor() {
                            bg-green-400 focus:ring outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
                 disabled={loading}>
-          Ανάρτηση
+          {loading ? (
+            <>
+              <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
+              Φόρτωση...
+            </>
+          ) : (
+            <>Ανάρτηση</>
+          )}
         </button>
       </div>
     </form>

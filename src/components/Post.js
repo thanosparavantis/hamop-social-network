@@ -1,10 +1,13 @@
 import TimeAgo from "timeago-react";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
+import AppCacheContext from "../AppCacheContext";
+import {Link} from "react-router-dom";
 
 function Post({postId, className = ""}) {
+  const appCache = useContext(AppCacheContext)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [author, setAuthor] = useState()
@@ -13,72 +16,86 @@ function Post({postId, className = ""}) {
   const [authorPhotoURL, setAuthorPhotoURL] = useState()
   const [content, setContent] = useState()
   const [creationDate, setCreationDate] = useState()
-  const postCallback = useRef()
-  const authorCallback = useRef()
 
   useEffect(() => {
-    const unsubscribe = firebase.firestore()
-      .collection("posts")
-      .doc(postId)
-      .onSnapshot(doc => {
-        console.debug(`[Post: ${postId}] Updating post details.`)
-        const data = doc.data()
-        if (!data) {
-          return
-        }
-        setAuthor(data.author)
-        setContent(data.content)
-        setCreationDate(data.creationDate.toDate())
-      }, error => setError(error))
+    if (appCache.isCached(postId)) {
+      const post = appCache.getItem(postId)
+      setAuthor(post.author)
+      setContent(post.content)
+      setCreationDate(new Date(post.creationDate))
+    } else {
+      firebase.firestore()
+        .collection("posts")
+        .doc(postId)
+        .get()
+        .then(doc => {
+          const data = doc.data()
+          if (!data) {
+            return
+          }
+          setAuthor(data.author)
+          setContent(data.content)
+          setCreationDate(data.creationDate.toDate())
 
-    postCallback.current = () => {
-      console.debug(`[Post: ${postId}] Unsubscribing from post updates.`)
-      unsubscribe()
+          const postObj = {
+            author: data.author,
+            content: data.content,
+            creationDate: data.creationDate.toDate()
+          }
+
+          appCache.addItem(postId, postObj)
+        })
+        .catch(error => setError(error))
     }
-  }, [postId])
+  }, [postId, appCache])
 
   useEffect(() => {
     if (!author) {
       return
     }
 
-    const unsubscribe = firebase.firestore()
-      .collection("users")
-      .doc(author)
-      .onSnapshot(doc => {
-        console.debug(`[Post: ${postId}] Updating user details.`)
-        const data = doc.data()
-        if (!data) {
-          return
-        }
-        setAuthorUsername(data.username)
-        setAuthorDisplayName(data.displayName)
-        setAuthorPhotoURL(data.photoURL)
-      }, error => setError(error))
+    if (appCache.isCached(author)) {
+      const user = appCache.getItem(author)
+      setAuthorUsername(user.username)
+      setAuthorDisplayName(user.displayName)
+      setAuthorPhotoURL(user.photoURL)
+    } else {
+      firebase.firestore()
+        .collection("users")
+        .doc(author)
+        .get()
+        .then(doc => {
+          const data = doc.data()
+          if (!data) {
+            return
+          }
+          setAuthorUsername(data.username)
+          setAuthorDisplayName(data.displayName)
+          setAuthorPhotoURL(data.photoURL)
 
-    authorCallback.current = () => {
-      console.debug(`[Post: ${postId}] Unsubscribing from author updates.`)
-      unsubscribe()
+          const userObj = {
+            username: data.username,
+            displayName: data.displayName,
+            photoURL: data.photoURL,
+            creationDate: data.creationDate.toDate()
+          }
+
+          appCache.addItem(author, userObj)
+        })
+        .catch(error => setError(error))
     }
-  }, [author, postId])
+  }, [author, postId, appCache])
 
   useEffect(() => {
-    if (author && authorUsername && authorDisplayName && authorPhotoURL && content && creationDate) {
+    if (author
+      && authorUsername
+      && authorDisplayName
+      && authorPhotoURL
+      && content
+      && creationDate) {
       setLoading(false)
     }
   }, [author, authorUsername, authorDisplayName, authorPhotoURL, content, creationDate])
-
-  useEffect(() => {
-    return () => {
-      if (postCallback.current) {
-        postCallback.current()
-      }
-
-      if (authorCallback.current) {
-        authorCallback.current()
-      }
-    }
-  }, [])
 
   if (error) {
     return (
@@ -95,17 +112,21 @@ function Post({postId, className = ""}) {
     )
   } else {
     return (
-      <div className={`flex bg-white px-5 py-4 rounded shadow ${className}`}>
-        <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border mr-3"/>
-        <div>
-          <div className="font-bold leading-none text-gray-900">
-            {authorDisplayName}
+      <div className={`flex flex-col align-top bg-white p-5 rounded shadow ${className}`}>
+        <Link to={`/${authorUsername}`} className="flex items-center flex-shrink-0">
+          <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border"/>
+          <div className="ml-3 flex flex-col">
+            <div className="font-bold leading-none text-gray-900">
+              {authorDisplayName}
+            </div>
+            <div className="text-sm text-gray-600">
+              <TimeAgo datetime={creationDate} locale="el"/>
+            </div>
           </div>
-          <div className="whitespace-pre-line mt-1 mb-2 text-gray-900">
+        </Link>
+        <div className="mt-3">
+          <div className="whitespace-pre-line text-gray-900">
             {content}
-          </div>
-          <div className="text-sm text-gray-600">
-            <TimeAgo datetime={creationDate} locale="el"/>
           </div>
         </div>
       </div>

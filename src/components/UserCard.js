@@ -1,54 +1,66 @@
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
+import AppCacheContext from "../AppCacheContext";
 
 function UserCard({userId, size = "normal", className = ""}) {
+  const appCache = useContext(AppCacheContext)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
   const [username, setUsername] = useState()
   const [displayName, setDisplayName] = useState()
   const [photoURL, setPhotoURL] = useState()
   const [creationDate, setCreationDate] = useState()
-  const userCallback = useRef()
 
   useEffect(() => {
-    const unsubscribe = firebase.firestore()
-      .collection("users")
-      .doc(userId)
-      .onSnapshot(doc => {
-        console.debug(`[UserCard: ${userId}] Updating user.`)
-        const data = doc.data()
-        if (!data) {
-          return
-        }
-        setUsername(data.username)
-        setDisplayName(data.displayName)
-        setPhotoURL(data.photoURL)
-        setCreationDate(data.creationDate.toDate())
-      }, error => setError(error))
+    if (appCache.isCached(userId)) {
+      const user = appCache.getItem(userId)
 
-    userCallback.current = () => {
-      console.debug(`[UserCard: ${userId}] Unsubscribing from user updates.`)
-      unsubscribe()
+      setUsername(user.username)
+      setDisplayName(user.displayName)
+      setPhotoURL(user.photoURL)
+      setCreationDate(new Date(user.creationDate))
+    } else {
+      firebase.firestore()
+        .collection("users")
+        .doc(userId)
+        .get()
+        .then(doc => {
+          const data = doc.data()
+
+          if (!data) {
+            return
+          }
+
+          setUsername(data.username)
+          setDisplayName(data.displayName)
+          setPhotoURL(data.photoURL)
+          setCreationDate(data.creationDate.toDate())
+
+          const userObj = {
+            username: data.username,
+            displayName: data.displayName,
+            photoURL: data.photoURL,
+            creationDate: data.creationDate.toDate()
+          }
+
+          appCache.addItem(userId, userObj)
+        })
+        .catch(error => setError(error))
     }
-  }, [userId])
+  }, [userId, appCache])
 
   useEffect(() => {
-    if (username && displayName && photoURL && creationDate) {
+    if (username
+      && displayName
+      && photoURL
+      && creationDate) {
       setLoading(false)
     }
   }, [username, displayName, photoURL, creationDate])
-
-  useEffect(() => {
-    return () => {
-      if (userCallback.current) {
-        userCallback.current()
-      }
-    }
-  }, [])
 
   if (error) {
     return (

@@ -10,10 +10,22 @@ import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CommunityPage from "./pages/CommunityPage";
 import HomePage from "./pages/HomePage";
+import AppCacheContext from "./AppCacheContext";
+import AppCache from "./AppCache";
+import AppQueries from "./AppQueries";
+import AppQueriesContext from "./AppQueriesContext";
 
 function App() {
   const [error, setError] = useState()
   let callback = useRef()
+
+  const appCache = useMemo(() => {
+    return new AppCache()
+  }, [])
+
+  const appQueries = useMemo(() => {
+    return new AppQueries()
+  }, [])
 
   const provider = useMemo(() => {
     return new firebase.auth.GoogleAuthProvider()
@@ -113,7 +125,6 @@ function App() {
               logout()
             }
           }
-
         },
         error => {
           setError(error)
@@ -166,36 +177,40 @@ function App() {
   }, [])
 
   return (
-    <UserContext.Provider value={user}>
-      <GoogleFontLoader fonts={[
-        {
-          font: "Source Sans Pro",
-          weights: [300, 400, 600],
-        }
-      ]}/>
-      <Router>
-        {user.valid && !error ? (
-          <Switch>
-            <Route path="/" exact>
-              {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
-            </Route>
-            <Route path="/community" exact>
-              <CommunityPage/>
-            </Route>
-            <Route path="/:username" exact>
-              <ProfilePage/>
-            </Route>
-            <Route path="*">
-              <NotFoundPage/>
-            </Route>
-          </Switch>
-        ) : (
-          <>
-            {error ? <ErrorPage error={error}/> : <LoadingPage/>}
-          </>
-        )}
-      </Router>
-    </UserContext.Provider>
+    <AppCacheContext.Provider value={appCache}>
+      <AppQueriesContext.Provider value={appQueries}>
+        <UserContext.Provider value={user}>
+          <GoogleFontLoader fonts={[
+            {
+              font: "Source Sans Pro",
+              weights: [300, 400, 600],
+            }
+          ]}/>
+          <Router>
+            {user.valid && !error ? (
+              <Switch>
+                <Route path="/" exact>
+                  {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
+                </Route>
+                <Route path="/community" exact>
+                  <CommunityPage/>
+                </Route>
+                <Route path="/:username" exact>
+                  <ProfilePage/>
+                </Route>
+                <Route path="*">
+                  <NotFoundPage/>
+                </Route>
+              </Switch>
+            ) : (
+              <>
+                {error ? <ErrorPage error={error}/> : <LoadingPage/>}
+              </>
+            )}
+          </Router>
+        </UserContext.Provider>
+      </AppQueriesContext.Provider>
+    </AppCacheContext.Provider>
   );
 }
 

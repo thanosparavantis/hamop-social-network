@@ -87,7 +87,9 @@ function ProfilePage() {
         <main className="my-5 mx-5 flex items-center justify-center">
           <div className="container grid gap-10 grid-cols-1 md:grid-cols-4">
             <section>
-              <UserCard userId={userId}/>
+              {userId && (
+                <UserCard userId={userId}/>
+              )}
             </section>
 
             <section className="md:col-span-3">

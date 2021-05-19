@@ -10,31 +10,9 @@ import Post from "../components/Post";
 
 function HomePage() {
   const user = useContext(UserContext)
-  const [users, setUsers] = useState()
   const [posts, setPosts] = useState()
   const [error, setError] = useState()
-  let sidebarCallback = useRef()
   let postsCallback = useRef()
-
-  useEffect(() => {
-    const unsubscribe = firebase.firestore()
-      .collection("users")
-      .orderBy("creationDate", "desc")
-      .limit(10)
-      .onSnapshot(querySnapshot => {
-          console.debug("[HomePage] Updating sidebar user profiles.")
-          const docs = querySnapshot.docs.filter(doc => doc.id !== user.uid)
-          setUsers(docs.map(doc => doc.id))
-        },
-        error => {
-          setError(error)
-        })
-
-    sidebarCallback.current = () => {
-      console.debug("[HomePage] Unsubscribing from sidebar.")
-      unsubscribe()
-    }
-  }, [user])
 
   useEffect(() => {
     if (posts) {
@@ -44,6 +22,7 @@ function HomePage() {
     const unsubscribe = firebase.firestore()
       .collection("posts")
       .orderBy("creationDate", "desc")
+      .limit(20)
       .onSnapshot(querySnapshot => {
         console.debug("[HomePage] Updating posts.")
         setPosts(querySnapshot.docs.map(doc => doc.id))
@@ -57,9 +36,6 @@ function HomePage() {
 
   useEffect(() => {
     return () => {
-      if (sidebarCallback.current) {
-        sidebarCallback.current()
-      }
       if (postsCallback.current) {
         postsCallback.current()
       }
@@ -74,28 +50,12 @@ function HomePage() {
         <Navbar/>
         <PageMeta title="Home"/>
         <main className="mx-5 my-10 flex items-center justify-center">
-          <div className="container grid gap-10 grid-cols-1 lg:grid-cols-4">
-            <section>
-              <h1 className="text-lg font-bold mb-3 text-gray-900">
-                Εσείς
-              </h1>
-
+          <div className="container lg:grid lg:gap-10 lg:grid-cols-1 lg:grid-cols-4">
+            <section className="hidden lg:block">
               <UserCard userId={user.uid} className="mb-10"/>
-
-              <h1 className="text-lg font-bold mb-3 text-gray-900">
-                Κοινότητα
-              </h1>
-
-              {users && users.map(userId => {
-                return <UserCard key={userId} userId={userId} size="small" className="mb-3"/>
-              })}
             </section>
             <section className="lg:col-span-3">
-              <h1 className="text-lg font-bold mb-3 text-gray-900">
-                Δημοσίευση
-              </h1>
-
-              <div className="mb-5">
+              <div className="mb-10">
                 <PostEditor/>
               </div>
 
