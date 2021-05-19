@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
 
 function PostEditor() {
   const [loading, setLoading] = useState(false)
