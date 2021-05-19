@@ -137,30 +137,33 @@ function Post({postId, className = ""}) {
     )
   } else {
     return (
-      <div className={`flex flex-col align-top bg-white p-5 rounded shadow ${className}`}>
-        <div className="flex items-center flex-shrink-0">
-          <Link to={`/${authorUsername}`} className="block hover:opacity-80">
-            <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border"/>
-          </Link>
-          <div className="ml-3 flex flex-col">
-            <Link to={`/${authorUsername}`} className="block font-bold leading-none text-gray-900 hover:underline">
-              {authorDisplayName}
+      <div className={className}>
+        <div className={`flex flex-col align-top bg-white p-5 rounded-t shadow`}>
+          <div className="flex items-center flex-shrink-0">
+            <Link to={`/${authorUsername}`} className="block hover:opacity-80">
+              <img src={authorPhotoURL} alt={authorUsername} className="h-12 rounded shadow-lg border"/>
             </Link>
-            <Link to={`/post/${postId}`} className="block mt-1 text-sm text-gray-600 hover:underline">
-              <TimeAgo datetime={creationDate} locale="el"/>
-            </Link>
+            <div className="ml-3 flex flex-col">
+              <Link to={`/${authorUsername}`} className="block font-bold leading-none text-gray-900 hover:underline">
+                {authorDisplayName}
+              </Link>
+              <Link to={`/post/${postId}`} className="block mt-1 text-sm text-gray-600 hover:underline">
+                <TimeAgo datetime={creationDate} locale="el"/>
+              </Link>
+            </div>
           </div>
-        </div>
-        <div className="mt-3">
-          <div className="whitespace-pre-line break-words text-gray-900">
-            {content}
+          <div className="mt-3">
+            <div className="whitespace-pre-line break-words text-gray-900">
+              {content}
+            </div>
           </div>
         </div>
 
+
         {author === user.uid && (
-          <div className="mt-3 flex items-center justify-end">
+          <div className="shadow px-5 py-2 bg-white border-t rounded-b flex items-center justify-end">
             <button className={`px-3 py-2 rounded shadow
-                    ${confirm ? "bg-red-500 text-white" : "bg-gray-100 text-gray-600 opacity-60 hover:opacity-100"}`}
+                    ${confirm ? "bg-red-500 text-white" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
                     title="Πατήστε εδώ για να διαγράψετε την δημοσίευση"
                     onClick={confirm ? deletePost : confirmDeletePost}>
               {confirm ? (
@@ -171,6 +174,7 @@ function Post({postId, className = ""}) {
             </button>
           </div>
         )}
+
       </div>
     )
   }
