@@ -4,7 +4,11 @@ const admin = require("firebase-admin")
 admin.initializeApp()
 
 exports.createUserProfile = functions.auth.user().onCreate((user) => {
-  const username = user.displayName.toLowerCase().replace(/[^a-z0-9]/gi, "")
+  let username = user.displayName.toLowerCase().replace(/[^a-z0-9]/gi, "")
+
+  if (username.length === 0) {
+    username = user.uid
+  }
 
   return admin.firestore()
     .collection("users")
@@ -34,10 +38,10 @@ exports.createPost = functions.https.onCall((data, context) => {
 
   const contentField = data.content
 
-  if (!(typeof contentField === 'string') || contentField.length === 0) {
+  if (!(typeof contentField === 'string') || contentField.length === 0 || contentField.length > 300) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Η δημοσίευση πρέπει να έχει περιεχόμενο."
+      "Η δημοσίευση δεν περιλαμβάνει ορθό περιεχόμενο."
     )
   }
 
