@@ -2,7 +2,7 @@ import TimeAgo from "timeago-react";
 import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import AppCacheContext from "../AppCacheContext";
 import {Link} from "react-router-dom";
 import UserContext from "../UserContext";
@@ -175,7 +175,8 @@ function Post({postId, className = ""}) {
 
   if (error) {
     return (
-      <div className={`whitespace-pre-line break-words bg-white p-5 rounded shadow text-red-600 text-center ${className}`}>
+      <div
+        className={`whitespace-pre-line break-words bg-white p-5 rounded shadow text-red-600 text-center ${className}`}>
         {error.code && (
           <div className="font-bold">
             {error.code}
@@ -238,7 +239,7 @@ function Post({postId, className = ""}) {
           )}
         </div>
 
-        { commentsOpen && (
+        {commentsOpen && (
           <CommentEditor postId={postId}/>
         )}
 

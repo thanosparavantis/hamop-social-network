@@ -2,7 +2,7 @@ import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import AppCacheContext from "../AppCacheContext";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -117,7 +117,8 @@ function Comment({postId, commentId, className = null}) {
 
   if (error) {
     return (
-      <div className={`whitespace-pre-line break-words bg-gray-100 p-5 shadow border-t text-red-600 text-center ${className}`}>
+      <div
+        className={`whitespace-pre-line break-words bg-gray-100 p-5 shadow border-t text-red-600 text-center ${className}`}>
         {error.code && (
           <div className="font-bold">
             {error.code}
