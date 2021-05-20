@@ -154,7 +154,7 @@ function Post({postId, className = ""}) {
     }, 10000)
 
     setTimeoutId(timeoutId)
-  }, [commentsOpen, throttled])
+  }, [commentsOpen, throttled, postId])
 
   useEffect(() => {
     return () => {

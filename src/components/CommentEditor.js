@@ -36,7 +36,7 @@ function CommentEditor({postId}) {
         setLoading(false)
         setError(error.message)
       })
-  }, [contentField])
+  }, [contentField, postId])
 
   return (
     <form action="#" method="POST" className="bg-gray-100 shadow border-t px-5 py-4">
