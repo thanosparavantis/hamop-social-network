@@ -1,42 +1,25 @@
 import PageMeta from "../components/PageMeta";
 import Navbar from "../components/Navbar";
-import {useEffect, useRef, useState} from "react";
-import firebase from "firebase";
+import {useEffect} from "react";
 import ErrorPage from "./ErrorPage";
 import UserCard from "../components/UserCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUsers} from "@fortawesome/free-solid-svg-icons";
+import useUserList from "../hooks/useUserList";
 
 function CommunityPage() {
-  const [error, setError] = useState()
-  const [users, setUsers] = useState()
-  const userCallback = useRef()
+  const [userIds, startUsers, stopUsers, userError] = useUserList()
 
   useEffect(() => {
-    const unsubscribe = firebase.firestore()
-      .collection("users")
-      .orderBy("creationDate", "desc")
-      .onSnapshot(querySnapshot => {
-          console.debug("[CommunityPage] Updating user list.")
-          setUsers(querySnapshot.docs.map(doc => doc.id))
-        }, error => setError(error)
-      )
-    userCallback.current = () => {
-      console.debug("[CommunityPage] Unsubscribing from user updates.")
-      unsubscribe()
-    }
-  }, [])
+    startUsers()
 
-  useEffect(() => {
     return () => {
-      if (userCallback.current) {
-        userCallback.current()
-      }
+      stopUsers()
     }
   }, [])
 
-  if (error) {
-    return <ErrorPage error={error}/>
+  if (userError) {
+    return <ErrorPage/>
   } else {
     return (
       <>
@@ -49,7 +32,7 @@ function CommunityPage() {
               Κοινότητα
             </h1>
 
-            {users && users.map(userId => (
+            {userIds.map(userId => (
               <UserCard userId={userId} key={userId} className="mb-3"/>
             ))}
           </div>

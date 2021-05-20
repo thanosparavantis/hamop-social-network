@@ -3,7 +3,7 @@ import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
 
-function PostEditor() {
+function PostEditor({className = null}) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [contentField, setContentField] = useState("")
@@ -39,30 +39,21 @@ function PostEditor() {
   }, [contentField])
 
   return (
-    <form action="#" method="POST">
-      <div>
-        <textarea
-          className="h-28 w-full border rounded p-3 shadow-lg bg-white disabled:opacity-50
-                     text-gray-900 focus:ring outline-none resize-none"
-          placeholder="Γράψτε εδώ ότι σκέφτεστε..."
-          onChange={handleContentField}
-          value={contentField}
-          maxLength="300"
-          disabled={loading}
-          required={true}
-        >
-        </textarea>
-      </div>
+    <form action="#" method="POST" className={`flex flex-col ${className}`}>
+      <textarea
+        className="h-28 w-full rounded-t p-3 shadow-lg bg-white disabled:opacity-50
+                   text-gray-900 focus:ring outline-none resize-none"
+        placeholder="Γράψε μια δημοσίευση..."
+        onChange={handleContentField}
+        value={contentField}
+        maxLength="300"
+        disabled={loading}
+        required={true}
+      >
+      </textarea>
 
-      <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
+      <div className="bg-gray-100 px-5 py-3 shadow border-t flex items-center justify-between flex-col md:flex-row">
         <div className="font-bold mb-3 md:mb-0 text-center md:text-left">
-
-          {!error && (
-            <p className="text-gray-700">
-              Απομένουν {300 - contentField.length} χαρακτήρες
-            </p>
-          )}
-
           {error && (
             <p className="text-red-600">
               <FontAwesomeIcon icon={faTimes} className="mr-2"/>

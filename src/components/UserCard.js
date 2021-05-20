@@ -1,111 +1,68 @@
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
-import {useContext, useEffect, useState} from "react";
-import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
-import AppCacheContext from "../AppCacheContext";
+import {faCircleNotch, faStar} from "@fortawesome/free-solid-svg-icons";
+import useUser from "../hooks/useUser";
+import LevelBadge from "./LevelBadge";
 
 function UserCard({userId, size = "normal", className = ""}) {
-  const appCache = useContext(AppCacheContext)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState()
-  const [username, setUsername] = useState()
-  const [displayName, setDisplayName] = useState()
-  const [photoURL, setPhotoURL] = useState()
-  const [creationDate, setCreationDate] = useState()
-
-  useEffect(() => {
-    if (appCache.isCached(userId)) {
-      const user = appCache.getItem(userId)
-
-      setUsername(user.username)
-      setDisplayName(user.displayName)
-      setPhotoURL(user.photoURL)
-      setCreationDate(new Date(user.creationDate))
-    } else {
-      firebase.firestore()
-        .collection("users")
-        .doc(userId)
-        .get()
-        .then(doc => {
-          const data = doc.data()
-
-          if (!data) {
-            return
-          }
-
-          setUsername(data.username)
-          setDisplayName(data.displayName)
-          setPhotoURL(data.photoURL)
-          setCreationDate(data.creationDate.toDate())
-
-          const userObj = {
-            username: data.username,
-            displayName: data.displayName,
-            photoURL: data.photoURL,
-            creationDate: data.creationDate.toDate()
-          }
-
-          appCache.addItem(userId, userObj)
-        })
-        .catch(error => setError(error))
-    }
-  }, [userId, appCache])
-
-  useEffect(() => {
-    if (username
-      && displayName
-      && photoURL
-      && creationDate) {
-      setLoading(false)
-    }
-  }, [username, displayName, photoURL, creationDate])
+  const [user, loading, error] = useUser(userId)
 
   if (error) {
     return (
-      <div className={`bg-white p-3 rounded shadow text-center font-bold text-red-600 ${className}`}>
-        {error.code}: {error.message}
+      <div
+        className={`whitespace-pre-line break-words bg-white p-5 rounded shadow text-center font-bold text-red-600 ${className}`}>
+        {error.code && (
+          <div className="font-bold">
+            {error.code}
+          </div>
+        )}
+
+        <div>
+          {error.message}
+        </div>
       </div>
     )
   } else if (loading) {
     return (
-      <div className={`bg-white p-3 rounded shadow text-center font-bold text-gray-600 ${className}`}>
-        <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
-        Φόρτωση...
+      <div className={`bg-white p-5 rounded shadow text-center font-bold text-gray-600 ${className}`}>
+        <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg" className="mr-3"/>
       </div>
     )
   } else {
     if (size === "small") {
       return (
-        <Link to={`/${username}`}
+        <Link to={`/${user.username}`}
               className={`flex items-center bg-white p-3 rounded shadow focus:ring ${className}`}>
           <div>
-            <img src={photoURL} alt={username} className="h-12 rounded shadow-lg border"/>
+            <img src={user.photoURL} alt={user.username} className="h-12 rounded shadow-lg border"/>
           </div>
           <div className="ml-5 text-gray-600">
             <div className="font-bold">
-              {displayName}
+              {user.displayName}
             </div>
             <div className="text-xs">
-              @{username}
+              @{user.username}
             </div>
           </div>
         </Link>
       )
     } else {
       return (
-        <Link to={`/${username}`}
+        <Link to={`/${user.username}`}
               className={`flex items-center bg-white p-5 rounded shadow focus:ring ${className}`}>
           <div>
-            <img src={photoURL} alt={username} className="h-20 rounded shadow-lg border"/>
+            <img src={user.photoURL} alt={user.username} className="h-20 rounded shadow-lg border"/>
           </div>
           <div className="ml-5">
             <div className="text-gray-900 font-bold leading-none">
-              {displayName}
+              {user.displayName}
             </div>
-            <div className="text-sm mt-1 text-gray-600">
-              Γράφτηκε <TimeAgo datetime={creationDate} locale="el"/>
+            <div className="flex items-center mt-1">
+              <LevelBadge user={user} className="mr-2"/>
+              <div className="text-sm text-gray-600">
+                Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
+              </div>
             </div>
           </div>
         </Link>

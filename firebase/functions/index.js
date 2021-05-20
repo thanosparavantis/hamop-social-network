@@ -29,13 +29,11 @@ exports.createUserProfile = functions.auth.user().onCreate(async (user) => {
       displayName: user.displayName,
       email: user.email,
       photoURL: user.photoURL,
+      postCount: 0,
       creationDate: admin.firestore.Timestamp.now(),
     })
     .then(() => {
       functions.logger.info(`Created user profile: ${username}`)
-    })
-    .catch(error => {
-      functions.logger.error(`Error: ${error.code} - ${error.message}`)
     })
 })
 
@@ -61,6 +59,7 @@ exports.createPost = functions.https.onCall((data, context) => {
     .add({
       author: context.auth.uid,
       content: contentField,
+      commentCount: 0,
       creationDate: admin.firestore.Timestamp.now(),
     })
     .then(() => {
@@ -68,13 +67,6 @@ exports.createPost = functions.https.onCall((data, context) => {
 
       return {
         success: true,
-      }
-    })
-    .catch((error) => {
-      functions.logger.error(`Error: ${error.code} - ${error.message}`)
-
-      return {
-        success: false,
       }
     })
 })
@@ -125,11 +117,112 @@ exports.createComment = functions.https.onCall(async (data, context) => {
         success: true,
       }
     })
-    .catch((error) => {
-      functions.logger.error(`Error: ${error.code} - ${error.message}`)
-
-      return {
-        success: false,
-      }
-    })
 })
+
+exports.countUserPost = functions.firestore
+  .document("/posts/{postId}")
+  .onCreate(async (doc, context) => {
+    const post = doc.data()
+    return admin.firestore()
+      .collection("users")
+      .doc(post.author)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          postCount: data.postCount ? data.postCount + 1 : 1
+        })
+      })
+  })
+
+exports.countUserComment = functions.firestore
+  .document("/comments/{commentId}")
+  .onCreate(async (doc, context) => {
+    const comment = doc.data()
+    return admin.firestore()
+      .collection("users")
+      .doc(comment.author)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          postCount: data.postCount ? data.postCount + 1 : 1
+        })
+      })
+  })
+
+exports.countPostComments = functions.firestore
+  .document("/comments/{commentId}")
+  .onCreate(async (doc, context) => {
+    const comment = doc.data()
+    return admin.firestore()
+      .collection("posts")
+      .doc(comment.post)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          commentCount: data.commentCount ? data.commentCount + 1 : 1
+        })
+      })
+  })
+
+exports.uncountUserPost = functions.firestore
+  .document("/posts/{postId}")
+  .onDelete(async (doc, context) => {
+    const post = doc.data()
+    return admin.firestore()
+      .collection("users")
+      .doc(post.author)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          postCount: data.postCount ? data.postCount - 1 : 0
+        })
+      })
+  })
+
+exports.uncountUserComment = functions.firestore
+  .document("/comments/{commentId}")
+  .onDelete(async (doc, context) => {
+    const comment = doc.data()
+    return admin.firestore()
+      .collection("users")
+      .doc(comment.author)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          postCount: data.postCount ? data.postCount - 1 : 0
+        })
+      })
+  })
+
+exports.uncountPostComments = functions.firestore
+  .document("/comments/{commentId}")
+  .onDelete(async (doc, context) => {
+    const comment = doc.data()
+    return admin.firestore()
+      .collection("posts")
+      .doc(comment.post)
+      .get()
+      .then(doc => {
+        const data = doc.data()
+        return doc.ref.update({
+          commentCount: data.commentCount ? data.commentCount - 1 : 0
+        })
+      })
+  })
+
+exports.removeComments = functions.firestore
+  .document("/posts/{postId}")
+  .onDelete((snap, context) => {
+    return admin.firestore()
+      .collection("comments")
+      .where("post", "==", snap.id)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach(doc => doc.ref.delete())
+      })
+  })

@@ -40,29 +40,20 @@ function CommentEditor({postId}) {
 
   return (
     <form action="#" method="POST" className="bg-gray-100 shadow border-t px-5 py-4">
-      <div>
-        <textarea
-          className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
-                     text-gray-900 focus:ring outline-none resize-none"
-          placeholder="Σχολιάστε την δημοσίευση..."
-          onChange={handleContentField}
-          value={contentField}
-          maxLength="300"
-          disabled={loading}
-          required={true}
-          autoFocus={true}
-        >
-        </textarea>
-      </div>
+      <textarea
+        className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
+                   text-gray-900 focus:ring outline-none resize-none"
+        placeholder="Σχολίασε τη δημοσίευση..."
+        onChange={handleContentField}
+        value={contentField}
+        maxLength="300"
+        disabled={loading}
+        required={true}
+      >
+      </textarea>
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
         <div className="text-sm font-bold mb-3 md:mb-0 text-center md:text-left">
-          {!error && (
-            <p className="text-gray-700">
-              Απομένουν {300 - contentField.length} χαρακτήρες
-            </p>
-          )}
-
           {error && (
             <p className="text-red-600">
               <FontAwesomeIcon icon={faTimes} className="mr-2"/>
