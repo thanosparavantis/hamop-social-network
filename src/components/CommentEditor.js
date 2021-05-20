@@ -66,12 +66,12 @@ function CommentEditor({postId}) {
       </textarea>
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
-        <div className="text-sm font-bold mb-3 md:mb-0 text-center md:text-left">
+        <div>
           {error && (
-            <p className="text-red-600">
+            <div className="text-sm font-bold mb-3 text-red-600 md:mb-0 text-center md:text-left">
               <FontAwesomeIcon icon={faTimes} className="mr-2"/>
               {error}
-            </p>
+            </div>
           )}
         </div>
         <button className="px-6 py-2 text-sm rounded shadow font-bold text-white hover:bg-green-500 w-full md:w-auto

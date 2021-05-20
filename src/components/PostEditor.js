@@ -45,7 +45,7 @@ function PostEditor({className = null}) {
   return (
     <form action="#" method="POST" className={`flex flex-col ${className}`}>
       <textarea
-        className="h-28 w-full rounded-t p-3 shadow-lg bg-white disabled:opacity-50
+        className="h-28 w-full rounded-t px-5 py-4 shadow-lg bg-white disabled:opacity-50
                    text-gray-900 focus:ring outline-none resize-none"
         placeholder="Γράψε μια δημοσίευση..."
         onChange={handleContentField}
@@ -56,16 +56,17 @@ function PostEditor({className = null}) {
       >
       </textarea>
 
-      <div className="bg-gray-100 px-5 py-3 shadow border-t flex items-center justify-between flex-col md:flex-row">
-        <div className="font-bold mb-3 md:mb-0 text-center md:text-left">
+      <div className="bg-gray-100 px-5 py-2 shadow border-t flex items-center justify-between flex-col md:flex-row">
+        <div>
           {error && (
-            <p className="text-red-600">
+            <div className="font-bold mb-3 text-red-600 md:mb-0 text-center md:text-left">
+
               <FontAwesomeIcon icon={faTimes} className="mr-2"/>
               {error}
-            </p>
+            </div>
           )}
         </div>
-        <button className="px-6 py-2 rounded shadow font-bold text-white hover:bg-green-500 w-full md:w-auto
+        <button className="px-6 py-2 text-sm rounded shadow font-bold text-white hover:bg-green-500 w-full md:w-auto
                            bg-green-400 focus:ring outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
                 disabled={loading || !isContentFieldValid()}>
