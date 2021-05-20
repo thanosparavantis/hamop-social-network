@@ -13,11 +13,15 @@ function PostEditor({className = null}) {
   }, [])
 
   const isContentFieldValid = useCallback(() => {
-    return contentField.length > 0 && contentField.length <= 300;
+    const content = contentField.trim()
+    return content.length > 0 && content.length <= 300;
   }, [contentField])
 
   const handleSubmit = useCallback(event => {
-    event.preventDefault()
+    if (!isContentFieldValid()) {
+      return
+    }
+
     setError(false)
     setLoading(true)
 

@@ -13,11 +13,15 @@ function CommentEditor({postId}) {
   }, [])
 
   const isContentFieldValid = useCallback(() => {
-    return contentField.length > 0 && contentField.length <= 300;
+    const content = contentField.trim()
+    return content.length > 0 && content.length <= 300;
   }, [contentField])
 
-  const handleSubmit = useCallback(event => {
-    event.preventDefault()
+  const handleSubmit = useCallback(() => {
+    if (!isContentFieldValid()) {
+      return
+    }
+
     setError(false)
     setLoading(true)
 
@@ -38,13 +42,22 @@ function CommentEditor({postId}) {
       })
   }, [contentField, postId])
 
+  const handleKeyPress = useCallback((event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault()
+      handleSubmit()
+    }
+  }, [handleSubmit])
+
   return (
     <form action="#" method="POST" className="bg-gray-100 shadow border-t px-5 py-4">
       <textarea
         className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
                    text-gray-900 focus:ring outline-none resize-none"
+        name="content"
         placeholder="Σχολίασε τη δημοσίευση..."
         onChange={handleContentField}
+        onKeyPress={handleKeyPress}
         value={contentField}
         maxLength="300"
         disabled={loading}
