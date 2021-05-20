@@ -117,15 +117,14 @@ function Comment({postId, commentId, className = null}) {
 
   if (error) {
     return (
-      <div className={`bg-gray-100 p-5 shadow border-t font-bold text-red-600 text-center ${className}`}>
+      <div className={`whitespace-pre-line break-words bg-gray-100 p-5 shadow border-t text-red-600 text-center ${className}`}>
         {error.code && (
-          <div>
+          <div className="font-bold">
             {error.code}
           </div>
         )}
 
         <div>
-          <FontAwesomeIcon icon={faExclamationTriangle} className="mr-3"/>
           {error.message}
         </div>
       </div>

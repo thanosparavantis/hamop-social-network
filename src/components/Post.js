@@ -139,6 +139,7 @@ function Post({postId, className = ""}) {
     const unsubscribe = firebase.firestore()
       .collection("comments")
       .where("post", "==", postId)
+      .orderBy("creationDate", "desc")
       .onSnapshot(querySnapshot => {
         console.debug(`[Post: ${postId}] Updating comments.`)
         setComments(querySnapshot.docs.map(doc => doc.id))
@@ -174,15 +175,14 @@ function Post({postId, className = ""}) {
 
   if (error) {
     return (
-      <div className={`bg-white p-5 rounded shadow font-bold text-red-600 text-center ${className}`}>
+      <div className={`whitespace-pre-line break-words bg-white p-5 rounded shadow text-red-600 text-center ${className}`}>
         {error.code && (
-          <div>
+          <div className="font-bold">
             {error.code}
           </div>
         )}
 
         <div>
-          <FontAwesomeIcon icon={faExclamationTriangle} className="mr-3"/>
           {error.message}
         </div>
       </div>
