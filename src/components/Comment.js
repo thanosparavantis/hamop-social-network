@@ -58,11 +58,8 @@ function Comment({commentId, className = null}) {
 
               <div className="flex items-center mt-1">
                 <LevelBadge user={user} className="mr-2"/>
-                <div className="text-gray-600">
-                  Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
-                </div>
+                <TimeAgo datetime={comment.creationDate} className="text-gray-600" locale="el"/>
               </div>
-
             </div>
           </div>
           <div className="mt-2 text-sm whitespace-pre-line break-words text-gray-900">
