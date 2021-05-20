@@ -7,11 +7,11 @@ import {Link} from "react-router-dom";
 import UserContext from "../UserContext";
 import CommentEditor from "./CommentEditor";
 import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import Comment from "./Comment";
 import usePost from "../hooks/usePost";
 import useUser from "../hooks/useUser";
 import useCommentList from "../hooks/useCommentList";
 import LevelBadge from "./LevelBadge";
+import Comment from "./Comment";
 
 function Post({postId, className = ""}) {
   const authUser = useContext(UserContext)
@@ -118,7 +118,7 @@ function Post({postId, className = ""}) {
                   onClick={handleCommentClick}>
             <FontAwesomeIcon icon={faComments} className="mr-2"/>
             Σχόλια {post.commentCount > 0 && (
-              <span>({post.commentCount})</span>
+            <span>({post.commentCount})</span>
           )}
           </button>
 
@@ -139,10 +139,11 @@ function Post({postId, className = ""}) {
         </div>
 
         {commentsOpen && (
-          <CommentEditor postId={postId}/>
+          <>
+            <CommentEditor postId={postId}/>
+            {commentIds.map(commentId => <Comment postId={postId} commentId={commentId} key={commentId}/>)}
+          </>
         )}
-
-        {commentIds.map(commentId => <Comment postId={postId} commentId={commentId} key={commentId}/>)}
       </div>
     )
   }
