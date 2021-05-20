@@ -59,7 +59,7 @@ function App() {
   const [user, setUser] = useState(userDefault)
 
   const logout = useCallback((event = null) => {
-    console.debug("[App] Starting logout process.")
+    console.debug("Starting logout process.")
 
     if (event) {
       event.preventDefault()
@@ -71,7 +71,7 @@ function App() {
 
     firebase.auth().signOut()
       .then(() => {
-        console.debug("[App] User logged out successfully.")
+        console.debug("User logged out successfully.")
 
         setUser(oldUser => ({
           ...oldUser,
@@ -84,7 +84,7 @@ function App() {
   }, [userDefault])
 
   const updateUser = useCallback((userId, newUser) => {
-    console.debug("[App] Updating user profile.")
+    console.debug("Updating user profile.")
 
     setUser(oldUser => ({
       ...oldUser,
@@ -105,7 +105,7 @@ function App() {
   }, [logout])
 
   const setupUserSync = useCallback((userId) => {
-    console.debug("[App] Setting up user sync.")
+    console.debug("Setting up user sync.")
 
     const unsubscribe = firebase.firestore()
       .collection("users")
@@ -128,7 +128,7 @@ function App() {
         })
 
     callback.current = () => {
-      console.debug("[App] Unsubscribing from user sync.")
+      console.debug("Unsubscribing from user sync.")
       unsubscribe()
     }
   }, [updateUser, logout])
@@ -138,7 +138,7 @@ function App() {
       .then(result => {
 
         if (result.user) {
-          console.debug("[App] Received user from redirect result.")
+          console.debug("Received user from redirect result.")
           const userId = result.user.uid
 
           firebase.firestore()
@@ -147,7 +147,7 @@ function App() {
             .get()
             .then(doc => {
               if (doc.exists) {
-                console.debug("[App] Storing updated profile picture from Google.")
+                console.debug("Storing updated profile picture from Google.")
                 doc.ref.update({
                   photoURL: result.user.photoURL
                 }).catch(error => setError(error))
@@ -158,14 +158,14 @@ function App() {
           setupUserSync(userId)
         } else {
           const localUserId = localStorage.getItem("userId")
-          console.debug(`[App] Local userId: ${localUserId}`)
+          console.debug(`Local userId: ${localUserId}`)
 
           if (localUserId && localUserId !== "null") {
-            console.debug("[App] Cached user, attempting login.")
+            console.debug("Cached user, attempting login.")
 
             setupUserSync(localUserId)
           } else {
-            console.debug("[App] User is not logged in.")
+            console.debug("User is not logged in.")
 
             setUser(oldUser => ({
               ...oldUser,

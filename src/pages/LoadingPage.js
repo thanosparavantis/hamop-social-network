@@ -9,10 +9,7 @@ function LoadingPage() {
       <PageMeta/>
       <Navbar/>
       <main className="full-height-adjusted flex items-center justify-center text-center">
-        <h1 className="text-gray-900 text-3xl font-bold">
-          <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
-          Φόρτωση...
-        </h1>
+        <FontAwesomeIcon icon={faCircleNotch} size="2x" spin={true} className="text-gray-600"/>
       </main>
     </>
   )

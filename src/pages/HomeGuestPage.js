@@ -14,7 +14,7 @@ function HomeGuestPage() {
       <PageMeta title="Home"/>
       <main className="m-5 flex items-center justify-center">
         <div className="container max-w-2xl">
-          <section>
+          <section className="h-56 bg-gray-100">
             <img src="/social.jpg"
                  alt="Φωτογραφία από την Ακρόπολη στην Αθήνα"
                  className="h-56 w-full object-cover rounded-t shadow"
