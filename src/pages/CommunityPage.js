@@ -16,7 +16,7 @@ function CommunityPage() {
     return () => {
       stopUsers()
     }
-  }, [])
+  }, [startUsers, stopUsers])
 
   if (userError) {
     return <ErrorPage/>

@@ -1,7 +1,7 @@
 import {useCallback, useContext, useState} from "react";
 import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch, faStar} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";

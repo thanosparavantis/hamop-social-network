@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch, faStar} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
 import LevelBadge from "./LevelBadge";
 
