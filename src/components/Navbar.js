@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHouseUser, faSignInAlt, faSignOutAlt, faUserCircle, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {useContext, useEffect, useState} from "react";
-import UserContext from "../UserContext";
+import UserContext from "../context/UserContext";
 
 function Navbar() {
   const user = useContext(UserContext)
@@ -53,7 +53,7 @@ function Navbar() {
 
                   {/* Desktop Logged In */}
                   <div className={`w-56 absolute text-gray-700 shadow-lg rounded-b bg-white
-                                 hidden md:flex flex-col
+                                 hidden md:flex flex-col text-center
                                  transition-all ${expanded ? "opacity-100" : "invisible opacity-0"}`}>
                     <Link to="/" className="px-10 py-5 border-b hover:underline focus:ring">
                       <FontAwesomeIcon icon={faHouseUser} className="mr-2"/>
@@ -100,8 +100,8 @@ function Navbar() {
                 </div>
               ) : (
                 <div className="select-none">
-                  <div className={`h-16 md:w-56 w-14 md:px-10 py-5 flex items-center justify-center
-                                 md:justify-start transition-all cursor-pointer select-none
+                  <div className={`h-16 md:w-48 w-14 md:px-10 py-5 flex items-center justify-center
+                                 text-center transition-all cursor-pointer select-none
                                  ${expanded ? "bg-white text-gray-900 border-b shadow-lg" : "hover:underline"}`}
                        onClick={handleClick}>
                     <FontAwesomeIcon icon={faUserCircle} className="md:mr-2" size="lg"/>
@@ -109,8 +109,8 @@ function Navbar() {
                   </div>
 
                   {/* Desktop Guest */}
-                  <div className={`w-56 absolute text-gray-700 shadow-lg rounded-b bg-white
-                                 hidden md:flex flex-col
+                  <div className={`w-48 absolute text-gray-700 shadow-lg rounded-b
+                                 bg-white hidden md:flex flex-col
                                  transition-all ${expanded ? "opacity-100" : "invisible opacity-0"}`}>
                     <Link to="/" className="px-10 py-5 border-b hover:underline focus:ring">
                       <FontAwesomeIcon icon={faHouseUser} className="mr-2"/>

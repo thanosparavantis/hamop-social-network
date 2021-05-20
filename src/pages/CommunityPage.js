@@ -25,7 +25,7 @@ function CommunityPage() {
       <>
         <PageMeta title="Κοινότητα"/>
         <Navbar/>
-        <main className="my-10 mx-5 flex items-center flex-col">
+        <main className="m-5 flex items-center flex-col">
           <div className="container max-w-2xl">
             <h1 className="text-xl font-bold mb-5 text-gray-900">
               <FontAwesomeIcon icon={faUsers} className="mr-3"/>

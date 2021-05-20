@@ -5,7 +5,7 @@ import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import UserContext from "../UserContext";
+import UserContext from "../context/UserContext";
 import useComment from "../hooks/useComment";
 import useUser from "../hooks/useUser";
 import LevelBadge from "./LevelBadge";

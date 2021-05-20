@@ -37,7 +37,7 @@ function ProfilePage() {
       <>
         <PageMeta title={username}/>
         <Navbar/>
-        <main className="my-5 mx-5 flex items-center justify-center">
+        <main className="m-5 flex items-center justify-center">
           <div className="container max-w-2xl">
             <UserCard userId={user.uid}/>
 

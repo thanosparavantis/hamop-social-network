@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
-import AppCacheContext from "../AppCacheContext";
-import UserContext from "../UserContext";
+import AppCacheContext from "../context/AppCacheContext";
+import UserContext from "../context/UserContext";
 
 function useUser(userId) {
   const authUser = useContext(UserContext)

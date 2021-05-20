@@ -2,7 +2,7 @@ import GoogleFontLoader from "react-google-font-loader";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import firebase from "firebase";
-import UserContext from "./UserContext";
+import UserContext from "./context/UserContext";
 import LoadingPage from "./pages/LoadingPage";
 import HomeGuestPage from "./pages/HomeGuestPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -10,10 +10,8 @@ import ErrorPage from "./pages/ErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CommunityPage from "./pages/CommunityPage";
 import HomePage from "./pages/HomePage";
-import AppCacheContext from "./AppCacheContext";
+import AppCacheContext from "./context/AppCacheContext";
 import AppCache from "./AppCache";
-import AppQueries from "./AppQueries";
-import AppQueriesContext from "./AppQueriesContext";
 import PostPage from "./pages/PostPage";
 
 function App() {
@@ -22,10 +20,6 @@ function App() {
 
   const appCache = useMemo(() => {
     return new AppCache()
-  }, [])
-
-  const appQueries = useMemo(() => {
-    return new AppQueries()
   }, [])
 
   const provider = useMemo(() => {
@@ -145,8 +139,22 @@ function App() {
 
         if (result.user) {
           console.debug("[App] Received user from redirect result.")
-
           const userId = result.user.uid
+
+          firebase.firestore()
+            .collection("users")
+            .doc(userId)
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+                console.debug("[App] Storing updated profile picture from Google.")
+                doc.ref.update({
+                  photoURL: result.user.photoURL
+                }).catch(error => setError(error))
+              }
+            })
+            .catch(error => setError(error))
+
           setupUserSync(userId)
         } else {
           const localUserId = localStorage.getItem("userId")
@@ -181,41 +189,39 @@ function App() {
 
   return (
     <AppCacheContext.Provider value={appCache}>
-      <AppQueriesContext.Provider value={appQueries}>
-        <UserContext.Provider value={user}>
-          <GoogleFontLoader fonts={[
-            {
-              font: "Source Sans Pro",
-              weights: [300, 400, 600],
-            }
-          ]}/>
-          <Router>
-            {user.valid && !error ? (
-              <Switch>
-                <Route path="/" exact>
-                  {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
-                </Route>
-                <Route path="/community" exact>
-                  <CommunityPage/>
-                </Route>
-                <Route path="/post/:postId" exact>
-                  <PostPage/>
-                </Route>
-                <Route path="/:username" exact>
-                  <ProfilePage/>
-                </Route>
-                <Route path="*">
-                  <NotFoundPage/>
-                </Route>
-              </Switch>
-            ) : (
-              <>
-                {error ? <ErrorPage error={error}/> : <LoadingPage/>}
-              </>
-            )}
-          </Router>
-        </UserContext.Provider>
-      </AppQueriesContext.Provider>
+      <UserContext.Provider value={user}>
+        <GoogleFontLoader fonts={[
+          {
+            font: "Source Sans Pro",
+            weights: [300, 400, 600],
+          }
+        ]}/>
+        <Router>
+          {user.valid && !error ? (
+            <Switch>
+              <Route path="/" exact>
+                {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
+              </Route>
+              <Route path="/community" exact>
+                <CommunityPage/>
+              </Route>
+              <Route path="/post/:postId" exact>
+                <PostPage/>
+              </Route>
+              <Route path="/:username" exact>
+                <ProfilePage/>
+              </Route>
+              <Route path="*">
+                <NotFoundPage/>
+              </Route>
+            </Switch>
+          ) : (
+            <>
+              {error ? <ErrorPage error={error}/> : <LoadingPage/>}
+            </>
+          )}
+        </Router>
+      </UserContext.Provider>
     </AppCacheContext.Provider>
   );
 }

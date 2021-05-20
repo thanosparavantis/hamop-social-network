@@ -4,7 +4,7 @@ import firebase from "firebase";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faComments} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import UserContext from "../UserContext";
+import UserContext from "../context/UserContext";
 import CommentEditor from "./CommentEditor";
 import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import usePost from "../hooks/usePost";

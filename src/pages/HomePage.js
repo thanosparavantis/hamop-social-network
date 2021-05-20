@@ -24,7 +24,7 @@ function HomePage() {
       <>
         <Navbar/>
         <PageMeta title="Home"/>
-        <main className="mx-5 my-5 flex items-center justify-center">
+        <main className="m-5 flex items-center justify-center">
           <div className="container max-w-2xl">
             <PostEditor className="mb-3"/>
 
