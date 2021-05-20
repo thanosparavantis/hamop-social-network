@@ -58,8 +58,8 @@ function UserCard({userId, size = "normal", className = ""}) {
             <div className="text-gray-900 font-bold leading-none">
               {user.displayName}
             </div>
-            <div className="flex items-center mt-1">
-              <LevelBadge user={user} className="mr-2"/>
+            <div className="flex items-start flex-col md:flex-row md:items-center mt-1">
+              <LevelBadge user={user} className="mb-1 md:mr-2 md:mb-0"/>
               <div className="text-sm text-gray-600">
                 Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
               </div>
