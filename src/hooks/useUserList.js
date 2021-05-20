@@ -10,6 +10,7 @@ function useUserList() {
     const unsubscribe = firebase.firestore()
       .collection("users")
       .orderBy("postCount", "desc")
+      .limit(10)
       .onSnapshot(querySnapshot => {
         console.debug("Updating user list.")
         setUserIds(querySnapshot.docs.map(doc => doc.id))

@@ -15,6 +15,7 @@ function useCommentList(postId) {
       .collection("comments")
       .where("post", "==", postId)
       .orderBy("creationDate", "desc")
+      .limit(20)
       .onSnapshot(querySnapshot => {
         console.debug("Updating comments.")
         setCommentIds(querySnapshot.docs.map(doc => {
