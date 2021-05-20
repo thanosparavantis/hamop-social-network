@@ -57,6 +57,7 @@ function App() {
       displayName: null,
       email: null,
       photoURL: null,
+      postCount: null,
       creationDate: null
     }
   }, [login])
@@ -102,6 +103,7 @@ function App() {
       displayName: newUser.displayName,
       email: newUser.email,
       photoURL: newUser.photoURL,
+      postCount: newUser.postCount,
       creationDate: newUser.creationDate.toDate()
     }))
 

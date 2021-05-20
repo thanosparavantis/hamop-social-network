@@ -1,8 +1,10 @@
 import {useContext, useEffect, useState} from "react";
 import firebase from "firebase";
 import AppCacheContext from "../AppCacheContext";
+import UserContext from "../UserContext";
 
 function useUser(userId) {
+  const authUser = useContext(UserContext)
   const appCache = useContext(AppCacheContext)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -14,6 +16,15 @@ function useUser(userId) {
 
   useEffect(() => {
     if (!userId) {
+      return
+    }
+
+    if (userId === authUser.uid) {
+      setUsername(authUser.username)
+      setDisplayName(authUser.displayName)
+      setPhotoURL(authUser.photoURL)
+      setPostCount(authUser.postCount)
+      setCreationDate(authUser.creationDate)
       return
     }
 
@@ -60,7 +71,7 @@ function useUser(userId) {
           console.error(error)
         })
     }
-  }, [userId, appCache])
+  }, [authUser, userId, appCache])
 
   useEffect(() => {
     if (username !== undefined

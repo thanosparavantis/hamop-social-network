@@ -45,8 +45,9 @@ function Comment({commentId, className = null}) {
     )
   } else {
     return (
-      <div className="bg-gray-100 shadow border-t">
-        <div className="px-5 py-3">
+      <div className="px-5 py-3 bg-gray-100 shadow border-t">
+
+        <div className="flex items-center justify-between">
           <div className="flex items-center flex-shrink-0">
             <Link to={`/${user.username}`} className="block hover:opacity-80">
               <img src={user.photoURL} alt={user.username} className="h-10 rounded shadow-lg border"/>
@@ -62,13 +63,8 @@ function Comment({commentId, className = null}) {
               </div>
             </div>
           </div>
-          <div className="mt-2 text-sm whitespace-pre-line break-words text-gray-900">
-            {comment.content}
-          </div>
-        </div>
 
-        {comment.author === authUser.uid && (
-          <div className="border-t px-5 py-2 flex items-center justify-end">
+          {comment.author === authUser.uid && (
             <button className={`px-3 py-2 rounded border
                     ${confirmDelete ? "bg-red-500 text-white" : "bg-white text-gray-600 hover:text-gray-900"}`}
                     title="Πατήστε εδώ για να διαγράψετε το σχόλιο"
@@ -79,8 +75,12 @@ function Comment({commentId, className = null}) {
                 <FontAwesomeIcon icon={faTrashAlt}/>
               )}
             </button>
-          </div>
-        )}
+          )}
+        </div>
+
+        <div className="mt-2 text-sm whitespace-pre-line break-words text-gray-900">
+          {comment.content}
+        </div>
       </div>
     )
   }
