@@ -11,7 +11,7 @@ function PostPage() {
       <Navbar/>
       <PageMeta/>
 
-      <main className="mx-5 my-10 flex items-center justify-center">
+      <main className="mx-5 my-5 flex items-center justify-center">
         <div className="container max-w-2xl">
           <Post postId={postId}/>
         </div>
