@@ -40,7 +40,7 @@ function PostEditor({className = null}) {
         setLoading(false)
         setError(error.message)
       })
-  }, [contentField])
+  }, [isContentFieldValid, contentField])
 
   return (
     <form action="#" method="POST" className={`flex flex-col ${className}`}>

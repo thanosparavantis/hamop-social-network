@@ -40,7 +40,7 @@ function CommentEditor({postId}) {
         setLoading(false)
         setError(error.message)
       })
-  }, [contentField, postId])
+  }, [isContentFieldValid, contentField, postId])
 
   const handleKeyPress = useCallback((event) => {
     if (event.key === "Enter" && !event.shiftKey) {
