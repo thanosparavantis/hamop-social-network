@@ -1,6 +1,6 @@
 import TimeAgo from "timeago-react";
 import {useCallback, useContext, useEffect, useState} from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faComments} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";

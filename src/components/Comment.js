@@ -1,5 +1,5 @@
 import {useCallback, useContext, useState} from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";

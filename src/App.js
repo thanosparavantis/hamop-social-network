@@ -1,7 +1,7 @@
 import GoogleFontLoader from "react-google-font-loader";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import UserContext from "./context/UserContext";
 import LoadingPage from "./pages/LoadingPage";
 import HomeGuestPage from "./pages/HomeGuestPage";

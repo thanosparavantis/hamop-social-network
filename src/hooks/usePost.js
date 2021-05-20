@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
 function usePost(postId) {

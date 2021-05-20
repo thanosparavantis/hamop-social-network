@@ -1,5 +1,5 @@
 import {useCallback, useState} from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
 
