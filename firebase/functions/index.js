@@ -11,17 +11,13 @@ exports.createUserProfile = functions.auth.user().onCreate(async (user) => {
   if (username.length === 0) {
     username = user.uid
   } else {
-    try {
-      const docsRef = await admin.firestore()
-        .collection("users")
-        .where("username", "==", username)
-        .get()
+    const docsRef = await admin.firestore()
+      .collection("users")
+      .where("username", "==", username)
+      .get()
 
-      if (docsRef.size > 0) {
-        username = username + docsRef.size.toString()
-      }
-    } catch (error) {
-      functions.logger.error(`Error: ${error.code} - ${error.message}`)
+    if (docsRef.size > 0) {
+      username = username + docsRef.size.toString()
     }
   }
 
@@ -47,7 +43,7 @@ exports.createPost = functions.https.onCall((data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "Πρέπει να είστε συνδεδεμένος για να κάνετε αυτή την ενέργεια."
+      "Πρέπει να είστε συνδεδεμένος."
     )
   }
 
@@ -60,17 +56,70 @@ exports.createPost = functions.https.onCall((data, context) => {
     )
   }
 
-  const userId = context.auth.uid
-
   return admin.firestore()
     .collection("posts")
     .add({
-      author: userId,
+      author: context.auth.uid,
       content: contentField,
       creationDate: admin.firestore.Timestamp.now(),
     })
     .then(() => {
       functions.logger.info("New post created.")
+
+      return {
+        success: true,
+      }
+    })
+    .catch((error) => {
+      functions.logger.error(`Error: ${error.code} - ${error.message}`)
+
+      return {
+        success: false,
+      }
+    })
+})
+
+exports.createComment = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Πρέπει να είστε συνδεδεμένος."
+    )
+  }
+
+  const contentField = data.content
+
+  if (!(typeof contentField === 'string') || contentField.length === 0 || contentField.length > 300) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Το σχόλιο περιλαμβάνει μη έγκυρο περιεχόμενο."
+    )
+  }
+
+  const postField = data.post
+
+  const docRef = await admin.firestore()
+    .collection("posts")
+    .doc(postField)
+    .get()
+
+  if (!docRef.exists) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Η αρχική δημοσίευση δεν υπάρχει."
+    )
+  }
+
+  return admin.firestore()
+    .collection("comments")
+    .add({
+      author: context.auth.uid,
+      post: postField,
+      content: contentField,
+      creationDate: admin.firestore.Timestamp.now(),
+    })
+    .then(() => {
+      functions.logger.info("New comment created.")
 
       return {
         success: true,
