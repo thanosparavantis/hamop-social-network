@@ -12,6 +12,7 @@ import useUser from "../hooks/useUser";
 import useCommentList from "../hooks/useCommentList";
 import LevelBadge from "./LevelBadge";
 import Comment from "./Comment";
+import Linkify from 'react-linkify';
 
 function Post({postId, className = ""}) {
   const authUser = useContext(UserContext)
@@ -108,7 +109,10 @@ function Post({postId, className = ""}) {
             </div>
           </div>
           <div className="mt-3 whitespace-pre-line break-words text-gray-900">
-            {post.content}
+            <Linkify componentDecorator={(decoratedHref, decoratedText, key) => (
+              <a target="_blank" rel="noopener noreferrer" href={decoratedHref} key={key} className="text-indigo-600 hover:underline">
+                {decoratedText}
+              </a>)}>{post.content}</Linkify>
           </div>
         </div>
 
