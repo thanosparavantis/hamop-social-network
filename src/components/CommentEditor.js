@@ -2,6 +2,7 @@ import {useCallback, useState} from "react";
 import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
+import TextareaAutosize from "react-textarea-autosize";
 
 function CommentEditor({postId}) {
   const [loading, setLoading] = useState(false)
@@ -51,16 +52,18 @@ function CommentEditor({postId}) {
 
   return (
     <form action="#" method="POST" className="bg-gray-100 shadow border-t rounded-b px-5 py-4">
-      <textarea className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
-                           text-gray-900 focus:ring outline-none resize-none"
-                name="content"
-                placeholder="Σχολίασε τη δημοσίευση..."
-                onChange={handleContentField}
-                onKeyPress={handleKeyPress}
-                value={contentField}
-                maxLength="300"
-                disabled={loading}
-                required={true}/>
+      <TextareaAutosize
+        className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
+                   text-gray-900 focus:ring outline-none resize-none"
+        minRows="2"
+        name="content"
+        placeholder="Σχολίασε τη δημοσίευση..."
+        onChange={handleContentField}
+        onKeyPress={handleKeyPress}
+        value={contentField}
+        maxLength="300"
+        disabled={loading}
+        required={true}/>
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
         <div>
