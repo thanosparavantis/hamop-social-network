@@ -2,7 +2,7 @@ import TimeAgo from "timeago-react";
 import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown, faCircleNotch, faComments} from "@fortawesome/free-solid-svg-icons";
+import {faArrowDown, faCircleNotch, faComments, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import UserContext from "../context/UserContext";
 import CommentEditor from "./CommentEditor";
@@ -135,12 +135,18 @@ function Post({postId, className = ""}) {
         </div>
 
         <div className="shadow px-5 py-2 bg-white border-t flex items-center justify-between">
-          <button className={`px-3 py-2 text-sm shadow rounded font-bold
+          <div>
+            {/*<button className="mr-3 px-3 py-2 text-sm shadow rounded*/}
+            {/*                   font-bold bg-gray-100 text-gray-600 hover:text-gray-900">*/}
+            {/*  <FontAwesomeIcon icon={faThumbsUp}/>*/}
+            {/*</button>*/}
+            <button className={`px-3 py-2 text-sm shadow rounded font-bold
                   ${commentsOpen ? "bg-gray-200 text-gray-900" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
-                  onClick={handleCommentClick}>
-            <FontAwesomeIcon icon={faComments} className="mr-2"/>
-            Σχόλια {post.commentCount > 0 && <>({post.commentCount})</>}
-          </button>
+                    onClick={handleCommentClick}>
+              <FontAwesomeIcon icon={faComments} className="mr-2"/>
+              Σχόλια {post.commentCount > 0 && <>({post.commentCount})</>}
+            </button>
+          </div>
 
           {post.author === authUser.uid && (
             <div>
@@ -160,14 +166,6 @@ function Post({postId, className = ""}) {
 
         {commentsOpen && (
           <div>
-            {hasMoreComments() && (
-              <div
-                className="px-5 py-2 text-sm font-bold text-center text-blue-600 bg-gray-100 shadow border-t border-b">
-                <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                Εμφάνισε όλα τα σχόλια για να προσθέσεις το δικό σου
-              </div>
-            )}
-
             {getComments().map(
               commentId => <Comment postId={postId} commentId={commentId} key={commentId}/>
             )}
@@ -176,8 +174,8 @@ function Post({postId, className = ""}) {
               <button className="w-full border-t px-5 py-6 bg-gray-100
                                  shadow font-bold text-blue-600 hover:text-blue-500"
                       onClick={progressComments}>
-                <FontAwesomeIcon icon={faComments} className="mr-2"/>
-                Εμφάνιση περισσότερων σχολίων ({commentIds.length - commentIndex})
+                <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
+                Εμφάνιση σχολίων ({commentIds.length - commentIndex})
               </button>
             ) : (
               <CommentEditor postId={postId}/>

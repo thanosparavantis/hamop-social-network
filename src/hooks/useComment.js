@@ -44,7 +44,7 @@ function useComment(commentId) {
             creationDate: data.creationDate.toDate()
           }
 
-          appCache.addItem(commentId, commentObj, "large")
+          appCache.addItem(commentId, commentObj)
         })
         .catch(error => {
           setError(true)

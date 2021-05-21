@@ -4,7 +4,7 @@ import {useCallback, useState} from "react";
 import ErrorPage from "./ErrorPage";
 import UserCard from "../components/UserCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUsers} from "@fortawesome/free-solid-svg-icons";
+import {faArrowDown, faUsers} from "@fortawesome/free-solid-svg-icons";
 import useUserList from "../hooks/useUserList";
 
 function CommunityPage() {
@@ -49,8 +49,8 @@ function CommunityPage() {
             {hasMoreUsers() && (
               <button className="w-full border-t px-5 py-6 bg-white shadow font-bold text-blue-600 hover:text-blue-500"
                       onClick={progressUsers}>
-                <FontAwesomeIcon icon={faUsers} className="mr-2"/>
-                Εμφάνιση περισσότερων χρηστών ({userIds.length - userIndex})
+                <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
+                Εμφάνιση χρηστών ({userIds.length - userIndex})
               </button>
             )}
           </div>
