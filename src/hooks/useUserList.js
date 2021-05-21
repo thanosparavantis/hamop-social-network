@@ -33,7 +33,7 @@ function useUserList() {
           console.error(error)
         })
     }
-  }, [])
+  }, [appCache])
 
   return [
     userIds,
