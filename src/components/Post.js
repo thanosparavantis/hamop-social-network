@@ -2,7 +2,7 @@ import TimeAgo from "timeago-react";
 import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown, faCircleNotch, faComments, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
+import {faArrowDown, faCircleNotch, faComments} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import UserContext from "../context/UserContext";
 import CommentEditor from "./CommentEditor";
@@ -14,56 +14,26 @@ import StarsBadge from "./StarsBadge";
 import Comment from "./Comment";
 import Linkify from 'react-linkify';
 
-function Post({postId, className = ""}) {
+function Post({postId, comments = false, className = null}) {
   const authUser = useContext(UserContext)
   const [post, postLoading, postError] = usePost(postId)
   const [user, userLoading, userError] = useUser(post.author)
-  const [commentIds, startComments, stopComments, commentError] = useCommentList(postId)
-  const commentPageSize = 10
-  const [commentIndex, setCommentIndex] = useState(commentPageSize)
+  const [commentIds, startComments, stopComments, loadMoreComments, hasMoreComments, commentError] = useCommentList(postId)
   const [error, setError] = useState()
-  const [timeoutId, setTimeoutId] = useState()
-  const [throttled, setThrottled] = useState(false)
-  const [commentsOpen, setCommentsOpen] = useState(false)
+  const [commentsOpen, setCommentsOpen] = useState(comments)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
-  const getComments = useCallback(() => {
-    return commentIds.slice(0, commentIndex)
-  }, [commentIds, commentIndex])
-
-  const hasMoreComments = useCallback(() => {
-    return commentIds.length - 1 >= commentIndex
-  }, [commentIds, commentIndex])
-
-  const progressComments = useCallback(() => {
-    if (commentIndex + commentPageSize <= commentIds.length - 1) {
-      setCommentIndex(commentIndex + commentPageSize)
-    } else {
-      setCommentIndex(commentIndex + commentIds.length)
-    }
-  }, [commentIds, commentIndex])
-
   const handleCommentClick = useCallback(() => {
-    setCommentsOpen(!commentsOpen)
+    setCommentsOpen(oldCommentsOpen => !oldCommentsOpen)
+  }, [])
 
-    if (!commentsOpen === false) {
+  useEffect(() => {
+    if (commentsOpen) {
+      startComments()
+    } else {
       stopComments()
     }
-
-    if (throttled) {
-      return
-    }
-
-    setThrottled(true)
-
-    startComments()
-
-    const timeoutId = setTimeout(() => {
-      setThrottled(false)
-    }, 10000)
-
-    setTimeoutId(timeoutId)
-  }, [commentsOpen, throttled, startComments, stopComments])
+  }, [commentsOpen, startComments, stopComments])
 
   const handleDeletePostClick = useCallback(() => {
     setConfirmDelete(true)
@@ -76,14 +46,6 @@ function Post({postId, className = ""}) {
       .delete()
       .catch(error => setError(error))
   }, [postId])
-
-  useEffect(() => {
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
-      }
-    }
-  }, [timeoutId])
 
   useEffect(() => {
     return () => {
@@ -166,16 +128,16 @@ function Post({postId, className = ""}) {
 
         {commentsOpen && (
           <div>
-            {getComments().map(
+            {commentIds.map(
               commentId => <Comment postId={postId} commentId={commentId} key={commentId}/>
             )}
 
-            {hasMoreComments() ? (
+            {hasMoreComments ? (
               <button className="w-full border-t px-5 py-6 bg-gray-100
                                  shadow font-bold text-blue-600 hover:text-blue-500"
-                      onClick={progressComments}>
+                      onClick={loadMoreComments}>
                 <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                Εμφάνιση σχολίων ({commentIds.length - commentIndex})
+                Εμφάνιση περισσότερων
               </button>
             ) : (
               <CommentEditor postId={postId}/>

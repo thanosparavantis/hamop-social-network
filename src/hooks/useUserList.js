@@ -1,42 +1,40 @@
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import firebase from "firebase/app";
-import AppCacheContext from "../context/AppCacheContext";
 
 function useUserList() {
-  const appCache = useContext(AppCacheContext)
   const [error, setError] = useState(false)
   const [userIds, setUserIds] = useState([])
+  const [limit, setLimit] = useState(20)
+  const [hasMore, setHasMore] = useState(false)
 
   useEffect(() => {
-    if (appCache.isCached("user_list")) {
-      const userIdsObj = appCache.getItem("user_list")
-      setUserIds(userIdsObj.users)
-    } else {
-      firebase.firestore()
-        .collection("users")
-        .orderBy("postCount", "desc")
-        .limit(100)
-        .get()
-        .then(querySnapshot => {
-          console.debug("Fetching list of users.")
-          const fetchedUserIds = querySnapshot.docs.map(doc => doc.id)
+    firebase.firestore()
+      .collection("users")
+      .orderBy("postCount", "desc")
+      .limit(limit)
+      .get()
+      .then(querySnapshot => {
+        console.debug("Fetching list of users.")
 
-          setUserIds(fetchedUserIds)
-          const userIdsObj = {
-            users: fetchedUserIds
-          }
+        const docSize = querySnapshot.docs.length
+        setHasMore(docSize >= limit)
 
-          appCache.addItem("user_list", userIdsObj)
-        })
-        .catch(error => {
-          setError(true)
-          console.error(error)
-        })
-    }
-  }, [appCache])
+        setUserIds(querySnapshot.docs.map(doc => doc.id))
+      })
+      .catch(error => {
+        setError(true)
+        console.error(error)
+      })
+  }, [limit])
+
+  const loadMore = useCallback(() => {
+    setLimit(oldLimit => oldLimit + 20)
+  }, [])
 
   return [
     userIds,
+    loadMore,
+    hasMore,
     error,
   ]
 }

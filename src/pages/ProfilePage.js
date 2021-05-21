@@ -9,12 +9,14 @@ import useUserPostList from "../hooks/useUserPostList";
 import useUserFromUsername from "../hooks/useUserFromUsername";
 import {useEffect} from "react";
 import LoadingPage from "./LoadingPage";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 
 
 function ProfilePage() {
   const {username} = useParams()
   const [user, userFound, userLoading, userError] = useUserFromUsername(username)
-  const [postIds, startPosts, stopPosts, postError] = useUserPostList(user.uid)
+  const [postIds, startPosts, stopPosts, loadMorePosts, hasMorePosts, postError] = useUserPostList(user.uid)
 
   useEffect(() => {
     if (!userLoading) {
@@ -35,7 +37,7 @@ function ProfilePage() {
   } else {
     return (
       <>
-        <PageMeta title={username}/>
+        <PageMeta title={user.displayName}/>
         <Navbar/>
         <main className="m-5 flex items-center justify-center">
           <div className="container max-w-2xl">
@@ -46,6 +48,14 @@ function ProfilePage() {
                 {postIds.map(postId => {
                   return <Post postId={postId} key={postId} className="mb-3"/>
                 })}
+
+                { hasMorePosts && (
+                  <button className="w-full border-t px-5 py-6 bg-white rounded shadow font-bold text-blue-600 hover:text-blue-500"
+                          onClick={loadMorePosts}>
+                    <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
+                    Εμφάνιση περισσότερων
+                  </button>
+                )}
               </div>
             ) : (
               <div className="mt-3 bg-white px-5 py-3 rounded shadow">

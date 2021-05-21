@@ -4,22 +4,36 @@ import {useCallback, useRef, useState} from "react";
 function useUserPostList(userId) {
   const [error, setError] = useState(false)
   const [postIds, setPostIds] = useState([])
+  const [limit, setLimit] = useState(20)
+  const [hasMore, setHasMore] = useState(false)
   const postCallback = useRef()
+
+  const stop = useCallback(() => {
+    if (postCallback.current) {
+      postCallback.current()
+      postCallback.current = null
+    }
+  }, [])
 
   const start = useCallback(() => {
     if (!userId) {
       return
     }
 
+    stop()
+
     const unsubscribe = firebase.firestore()
       .collection("posts")
       .where("author", "==", userId)
       .orderBy("creationDate", "desc")
+      .limit(limit)
       .onSnapshot(querySnapshot => {
         console.debug("Updating posts.")
-        setPostIds(querySnapshot.docs.map(doc => {
-          return doc.id
-        }))
+
+        const docSize = querySnapshot.docs.length
+        setHasMore(docSize >= limit)
+
+        setPostIds(querySnapshot.docs.map(doc => doc.id))
       }, error => {
         setError(true)
         console.error(error)
@@ -29,18 +43,18 @@ function useUserPostList(userId) {
       console.debug("Unsubscribing from posts.")
       unsubscribe()
     }
-  }, [userId])
+  }, [userId, stop, limit])
 
-  const stop = useCallback(() => {
-    if (postCallback.current) {
-      postCallback.current()
-    }
+  const loadMore = useCallback(() => {
+    setLimit(oldLimit => oldLimit + 20)
   }, [])
 
   return [
     postIds,
     start,
     stop,
+    loadMore,
+    hasMore,
     error,
   ]
 }

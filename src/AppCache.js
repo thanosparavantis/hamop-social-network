@@ -1,7 +1,7 @@
 export default class AppCache {
   addItem(itemId, dataObj) {
     const now = new Date()
-    now.setMinutes(now.getMinutes() + 5)
+    now.setMinutes(now.getMinutes() + 10)
     dataObj["validity"] = now.getTime()
 
     const dataStr = JSON.stringify(dataObj)

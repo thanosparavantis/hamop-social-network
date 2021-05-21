@@ -13,7 +13,7 @@ function PostPage() {
 
       <main className="m-5 flex items-center justify-center">
         <div className="container max-w-2xl">
-          <Post postId={postId}/>
+          <Post postId={postId} comments={true}/>
         </div>
       </main>
     </>
