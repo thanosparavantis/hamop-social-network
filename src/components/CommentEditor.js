@@ -18,7 +18,11 @@ function CommentEditor({postId}) {
     return content.length > 0 && content.length <= 300;
   }, [contentField])
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback((event = null) => {
+    if (event) {
+      event.preventDefault()
+    }
+
     if (!isContentFieldValid()) {
       return
     }

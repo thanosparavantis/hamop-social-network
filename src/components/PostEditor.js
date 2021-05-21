@@ -19,6 +19,8 @@ function PostEditor({className = null}) {
   }, [contentField])
 
   const handleSubmit = useCallback(event => {
+    event.preventDefault()
+
     if (!isContentFieldValid()) {
       return
     }
