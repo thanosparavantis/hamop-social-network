@@ -3,7 +3,7 @@ import TimeAgo from "timeago-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
-import LevelBadge from "./LevelBadge";
+import StarsBadge from "./StarsBadge";
 
 function UserCard({userId, size = "normal", className = ""}) {
   const [user, loading, error] = useUser(userId)
@@ -59,7 +59,7 @@ function UserCard({userId, size = "normal", className = ""}) {
               {user.displayName}
             </div>
             <div className="flex items-start flex-col md:flex-row md:items-center mt-1">
-              <LevelBadge user={user} className="mb-1 md:mr-2 md:mb-0"/>
+              <StarsBadge user={user} className="mb-1 md:mr-2 md:mb-0"/>
               <div className="text-sm text-gray-600">
                 Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
               </div>

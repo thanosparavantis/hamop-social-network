@@ -50,20 +50,17 @@ function CommentEditor({postId}) {
   }, [handleSubmit])
 
   return (
-    <form action="#" method="POST" className="bg-gray-100 shadow border-t px-5 py-4">
-      <textarea
-        className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
-                   text-gray-900 focus:ring outline-none resize-none"
-        name="content"
-        placeholder="Σχολίασε τη δημοσίευση..."
-        onChange={handleContentField}
-        onKeyPress={handleKeyPress}
-        value={contentField}
-        maxLength="300"
-        disabled={loading}
-        required={true}
-      >
-      </textarea>
+    <form action="#" method="POST" className="bg-gray-100 shadow border-t rounded-b px-5 py-4">
+      <textarea className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
+                           text-gray-900 focus:ring outline-none resize-none"
+                name="content"
+                placeholder="Σχολίασε τη δημοσίευση..."
+                onChange={handleContentField}
+                onKeyPress={handleKeyPress}
+                value={contentField}
+                maxLength="300"
+                disabled={loading}
+                required={true}/>
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
         <div>

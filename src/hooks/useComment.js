@@ -48,7 +48,7 @@ function useComment(commentId) {
         })
         .catch(error => {
           setError(true)
-          console.debug(error)
+          console.error(error)
         })
     }
   }, [commentId, appCache])

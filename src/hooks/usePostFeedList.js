@@ -18,7 +18,7 @@ function usePostFeedList() {
         }))
       }, error => {
         setError(true)
-        console.debug(error)
+        console.error(error)
       })
 
     postCallback.current = () => {

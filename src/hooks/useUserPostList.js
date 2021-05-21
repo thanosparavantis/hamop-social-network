@@ -22,7 +22,7 @@ function useUserPostList(userId) {
         }))
       }, error => {
         setError(true)
-        console.debug(error)
+        console.error(error)
       })
 
     postCallback.current = () => {

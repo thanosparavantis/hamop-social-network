@@ -8,7 +8,7 @@ import {faCheckCircle, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import UserContext from "../context/UserContext";
 import useComment from "../hooks/useComment";
 import useUser from "../hooks/useUser";
-import LevelBadge from "./LevelBadge";
+import StarsBadge from "./StarsBadge";
 import Linkify from "react-linkify";
 
 function Comment({commentId, className = null}) {
@@ -59,7 +59,7 @@ function Comment({commentId, className = null}) {
               </Link>
 
               <div className="flex items-center mt-1">
-                <LevelBadge user={user} className="mr-2"/>
+                <StarsBadge user={user} className="mr-2"/>
                 <TimeAgo datetime={comment.creationDate} className="text-gray-600" locale="el"/>
               </div>
             </div>

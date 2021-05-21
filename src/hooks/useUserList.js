@@ -16,7 +16,7 @@ function useUserList() {
         setUserIds(querySnapshot.docs.map(doc => doc.id))
       }, error => {
         setError(true)
-        console.debug(error)
+        console.error(error)
       })
 
     userCallback.current = () => {

@@ -14,8 +14,7 @@ function useCommentList(postId) {
     const unsubscribe = firebase.firestore()
       .collection("comments")
       .where("post", "==", postId)
-      .orderBy("creationDate", "desc")
-      .limit(20)
+      .orderBy("creationDate", "asc")
       .onSnapshot(querySnapshot => {
         console.debug("Updating comments.")
         setCommentIds(querySnapshot.docs.map(doc => {
@@ -23,7 +22,7 @@ function useCommentList(postId) {
         }))
       }, error => {
         setError(true)
-        console.debug(error)
+        console.error(error)
       })
 
     commentCallback.current = () => {
