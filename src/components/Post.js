@@ -164,7 +164,7 @@ function Post({postId, className = ""}) {
               <div
                 className="px-5 py-2 text-sm font-bold text-center text-blue-600 bg-gray-100 shadow border-t border-b">
                 <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                Εμφάνισε όλα τα σχόλια για να προσθέσεις και το δικό σου
+                Εμφάνισε όλα τα σχόλια για να προσθέσεις το δικό σου
               </div>
             )}
 
