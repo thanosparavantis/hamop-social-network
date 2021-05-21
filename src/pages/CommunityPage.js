@@ -1,6 +1,6 @@
 import PageMeta from "../components/PageMeta";
 import Navbar from "../components/Navbar";
-import {useEffect} from "react";
+import {useCallback, useState} from "react";
 import ErrorPage from "./ErrorPage";
 import UserCard from "../components/UserCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,15 +8,25 @@ import {faUsers} from "@fortawesome/free-solid-svg-icons";
 import useUserList from "../hooks/useUserList";
 
 function CommunityPage() {
-  const [userIds, startUsers, stopUsers, userError] = useUserList()
+  const [userIds, userError] = useUserList()
+  const userPageSize = 10
+  const [userIndex, setUserIndex] = useState(userPageSize)
 
-  useEffect(() => {
-    startUsers()
+  const getUsers = useCallback(() => {
+    return userIds.slice(0, userIndex)
+  }, [userIds, userIndex])
 
-    return () => {
-      stopUsers()
+  const hasMoreUsers = useCallback(() => {
+    return userIds.length - 1 >= userIndex
+  }, [userIds, userIndex])
+
+  const progressUsers = useCallback(() => {
+    if (userIndex + userPageSize <= userIds.length - 1) {
+      setUserIndex(userIndex + userPageSize)
+    } else {
+      setUserIndex(userIndex + userIds.length)
     }
-  }, [startUsers, stopUsers])
+  }, [userIds, userIndex])
 
   if (userError) {
     return <ErrorPage/>
@@ -32,9 +42,17 @@ function CommunityPage() {
               Κοινότητα
             </h1>
 
-            {userIds.map(userId => (
+            {getUsers().map(userId => (
               <UserCard userId={userId} key={userId} className="mb-3"/>
             ))}
+
+            {hasMoreUsers() && (
+              <button className="w-full border-t px-5 py-6 bg-white shadow font-bold text-blue-600 hover:text-blue-500"
+                      onClick={progressUsers}>
+                <FontAwesomeIcon icon={faUsers} className="mr-2"/>
+                Εμφάνιση περισσότερων χρηστών ({userIds.length - userIndex})
+              </button>
+            )}
           </div>
         </main>
       </>

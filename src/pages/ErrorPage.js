@@ -11,10 +11,7 @@ function ErrorPage({error}) {
           <h1 className="text-3xl text-gray-900 font-bold mb-2">hamop.gr</h1>
           <p className="text-xl text-gray-800">Δεν μπορέσαμε να επεξεργαστούμε το αίτημά σας.</p>
         </div>
-        <div className="font-bold font-mono text-lg text-red-600">
-          <h2><code>{error.code}</code></h2>
-          <p><code>{error.message}</code></p>
-        </div>
+
       </main>
     </>
   )

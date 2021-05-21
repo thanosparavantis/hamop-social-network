@@ -32,11 +32,11 @@ function Post({postId, className = ""}) {
   }, [commentIds, commentIndex])
 
   const hasMoreComments = useCallback(() => {
-    return commentIds.length - 1 > commentIndex
+    return commentIds.length - 1 >= commentIndex
   }, [commentIds, commentIndex])
 
   const progressComments = useCallback(() => {
-    if (commentIndex + commentPageSize < commentIds.length - 1) {
+    if (commentIndex + commentPageSize <= commentIds.length - 1) {
       setCommentIndex(commentIndex + commentPageSize)
     } else {
       setCommentIndex(commentIndex + commentIds.length)
