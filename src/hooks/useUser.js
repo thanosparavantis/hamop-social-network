@@ -35,7 +35,7 @@ function useUser(userId) {
       && creationDate !== undefined
     ) {
       appCache.addItem(userId, {
-        id: userId,
+        uid: userId,
         username: username,
         displayName: displayName,
         photoURL: photoURL,
