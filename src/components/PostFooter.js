@@ -7,7 +7,7 @@ import CommentEditor from "./CommentEditor";
 import usePostCommentList from "../hooks/usePostCommentList";
 import {useCallback, useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 function PostFooter({post, expanded = false}) {
   const authUser = useContext(UserContext)
