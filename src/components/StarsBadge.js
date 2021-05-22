@@ -19,7 +19,7 @@ function StarsBadge({user, className = null}) {
   } else {
     return (
       <div className={className}>
-        <div className={`text-sm md:text-sm font-bold px-1 shadow rounded text-gray-900 select-none ${bgColor}`}>
+        <div className={`text-sm md:text-xs font-bold px-1 shadow rounded text-gray-900 select-none ${bgColor}`}>
           {starDisplay}
           <FontAwesomeIcon icon={faStar} size="sm" className="ml-1"/>
         </div>
