@@ -11,7 +11,31 @@ function useComment(commentId) {
   const [creationDate, setCreationDate] = useState()
 
   useEffect(() => {
-    if (!commentId) {
+    if (appCache.isCached(commentId)
+      && author === undefined
+      && content === undefined
+      && creationDate === undefined
+    ) {
+      const post = appCache.getItem(commentId)
+      setAuthor(post.author)
+      setContent(post.content)
+      setCreationDate(new Date(post.creationDate))
+    } else if (!appCache.isCached(commentId)
+      && author !== undefined
+      && content !== undefined
+      && creationDate !== undefined
+    ) {
+      appCache.addItem(commentId, {
+        id: commentId,
+        author: author,
+        content: content,
+        creationDate: creationDate
+      })
+    }
+  }, [appCache, commentId, author, content, creationDate])
+
+  useEffect(() => {
+    if (!commentId || appCache.isCached(commentId)) {
       return
     }
 
@@ -26,6 +50,7 @@ function useComment(commentId) {
         .doc(commentId)
         .get()
         .then(doc => {
+          console.debug(`Fetch comment: ${commentId}`)
           const data = doc.data()
 
           if (!data) {
@@ -37,14 +62,6 @@ function useComment(commentId) {
           setAuthor(data.author)
           setContent(data.content)
           setCreationDate(data.creationDate.toDate())
-
-          const commentObj = {
-            author: data.author,
-            content: data.content,
-            creationDate: data.creationDate.toDate()
-          }
-
-          appCache.addItem(commentId, commentObj)
         })
         .catch(error => {
           setError(true)
@@ -55,8 +72,8 @@ function useComment(commentId) {
 
   useEffect(() => {
     if (author !== undefined
-      && content  !== undefined
-      && creationDate  !== undefined) {
+      && content !== undefined
+      && creationDate !== undefined) {
       setLoading(false)
     }
   }, [author, content, creationDate])

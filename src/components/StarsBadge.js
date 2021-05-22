@@ -2,7 +2,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
 
 function StarsBadge({user, className = null}) {
-  const stars = user.postCount
+  const stars = user.postCount + user.commentCount
   const starDisplay = stars.toLocaleString("el-GR")
   let bgColor = "bg-gray-200"
 

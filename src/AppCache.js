@@ -5,8 +5,6 @@ export default class AppCache {
     dataObj["validity"] = now.getTime()
 
     const dataStr = JSON.stringify(dataObj)
-    console.debug(`Adding to cache: ${dataStr}`)
-
     sessionStorage.setItem(itemId, dataStr)
   }
 
@@ -29,10 +27,6 @@ export default class AppCache {
 
   getItem(itemId) {
     const dataStr = sessionStorage.getItem(itemId)
-    const dataObj = JSON.parse(dataStr)
-
-    console.debug(`Getting from cache: ${dataStr}`)
-
-    return dataObj
+    return JSON.parse(dataStr)
   }
 }

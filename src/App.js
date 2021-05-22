@@ -15,7 +15,7 @@ import AppCache from "./AppCache";
 import PostPage from "./pages/PostPage";
 
 function App() {
-  const [error, setError] = useState()
+  const [error, setError] = useState(false)
   let callback = useRef()
 
   const appCache = useMemo(() => {
@@ -49,10 +49,7 @@ function App() {
       uid: null,
       username: null,
       displayName: null,
-      email: null,
       photoURL: null,
-      postCount: null,
-      creationDate: null
     }
   }, [login])
 
@@ -78,14 +75,13 @@ function App() {
           valid: true,
         }))
       })
-      .catch((error) => {
-        setError(error)
+      .catch(error => {
+        setError(true)
+        console.debug(error)
       })
   }, [userDefault])
 
   const updateUser = useCallback((userId, newUser) => {
-    console.debug("Updating user profile.")
-
     setUser(oldUser => ({
       ...oldUser,
       login: null,
@@ -95,22 +91,18 @@ function App() {
       uid: userId,
       username: newUser.username,
       displayName: newUser.displayName,
-      email: newUser.email,
       photoURL: newUser.photoURL,
-      postCount: newUser.postCount,
-      creationDate: newUser.creationDate.toDate()
     }))
 
     localStorage.setItem("userId", userId)
   }, [logout])
 
   const setupUserSync = useCallback((userId) => {
-    console.debug("Setting up user sync.")
-
     const unsubscribe = firebase.firestore()
       .collection("users")
       .doc(userId)
       .onSnapshot(doc => {
+        console.debug("Fetch logged in user.")
           const newUser = doc.data()
 
           if (newUser) {
@@ -124,7 +116,8 @@ function App() {
           }
         },
         error => {
-          setError(error)
+          setError(true)
+          console.error(error)
         })
 
     callback.current = () => {
@@ -147,26 +140,28 @@ function App() {
             .get()
             .then(doc => {
               if (doc.exists) {
-                console.debug("Storing updated profile picture from Google.")
+                console.debug("Updating user profile picture.")
                 doc.ref.update({
                   photoURL: result.user.photoURL
-                }).catch(error => setError(error))
+                }).catch(error => {
+                  setError(true)
+                  console.error(error)
+                })
               }
             })
-            .catch(error => setError(error))
+            .catch(error => {
+              setError(true)
+              console.error(error)
+            })
 
           setupUserSync(userId)
         } else {
           const localUserId = localStorage.getItem("userId")
-          console.debug(`Local userId: ${localUserId}`)
+          console.debug(`Logged in user id: ${localUserId}`)
 
-          if (localUserId && localUserId !== "null") {
-            console.debug("Cached user, attempting login.")
-
+          if (localUserId) {
             setupUserSync(localUserId)
           } else {
-            console.debug("User is not logged in.")
-
             setUser(oldUser => ({
               ...oldUser,
               valid: true,
@@ -217,7 +212,7 @@ function App() {
             </Switch>
           ) : (
             <>
-              {error ? <ErrorPage error={error}/> : <LoadingPage/>}
+              {error ? <ErrorPage/> : <LoadingPage/>}
             </>
           )}
         </Router>

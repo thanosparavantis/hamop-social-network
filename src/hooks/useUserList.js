@@ -14,7 +14,7 @@ function useUserList() {
       .limit(limit)
       .get()
       .then(querySnapshot => {
-        console.debug("Fetching list of users.")
+        console.debug("Fetch user list.")
 
         const docSize = querySnapshot.docs.length
         setHasMore(docSize >= limit)

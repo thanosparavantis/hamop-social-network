@@ -23,7 +23,7 @@ function usePostFeedList() {
       .orderBy("creationDate", "desc")
       .limit(limit)
       .onSnapshot(querySnapshot => {
-        console.debug("Updating posts.")
+        console.debug("Fetch posts feed.")
 
         const docSize = querySnapshot.docs.length
         setHasMore(docSize >= limit)
@@ -35,7 +35,7 @@ function usePostFeedList() {
       })
 
     postCallback.current = () => {
-      console.debug("Unsubscribing from posts.")
+      console.debug("Unsubscribe from posts feed.")
       unsubscribe()
     }
   }, [stop, limit])

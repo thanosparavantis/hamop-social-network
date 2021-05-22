@@ -1,15 +1,13 @@
 import {useEffect, useState} from "react";
 import firebase from "firebase/app";
+import useUser from "./useUser";
 
 function useUserFromUsername(username) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [found, setFound] = useState(true)
   const [uid, setUID] = useState()
-  const [displayName, setDisplayName] = useState()
-  const [photoURL, setPhotoURL] = useState()
-  const [postCount, setPostCount] = useState()
-  const [creationDate, setCreationDate] = useState()
+  const [user, userLoading, userError] = useUser(uid)
 
   useEffect(() => {
     if (!username) {
@@ -21,24 +19,14 @@ function useUserFromUsername(username) {
       .where("username", "==", username)
       .get()
       .then(docs => {
-        if (docs.size === 0) {
+        console.log(`Fetch user id from username: ${username}`)
+        if (docs.empty) {
           setFound(false)
-        }
-
-        const doc = docs.docs[0]
-        const data = doc.data()
-
-        if (!data) {
-          setError(true)
           console.error("User record does not exist.")
           return
         }
 
-        setUID(doc.id)
-        setDisplayName(data.displayName)
-        setPhotoURL(data.photoURL)
-        setPostCount(data.postCount)
-        setCreationDate(data.creationDate.toDate())
+        setUID(docs.docs[0].id)
       })
       .catch(error => {
         setError(true)
@@ -47,27 +35,16 @@ function useUserFromUsername(username) {
   }, [username])
 
   useEffect(() => {
-    if (uid !== undefined
-      && displayName !== undefined
-      && photoURL !== undefined
-      && postCount !== undefined
-      && creationDate !== undefined) {
+    if (uid !== undefined) {
       setLoading(false)
     }
-  }, [uid, displayName, photoURL, postCount, creationDate])
+  }, [uid])
 
   return [
-    {
-      uid: uid,
-      username: username,
-      displayName: displayName,
-      photoURL: photoURL,
-      postCount: postCount,
-      creationDate: creationDate,
-    },
+    user,
     found,
-    loading,
-    error,
+    loading && userLoading,
+    error && userError,
   ]
 }
 

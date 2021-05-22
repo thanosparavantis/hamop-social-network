@@ -3,8 +3,9 @@ import Navbar from "../components/Navbar";
 import ErrorPage from "./ErrorPage";
 import UserCard from "../components/UserCard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown, faUsers} from "@fortawesome/free-solid-svg-icons";
+import {faUsers} from "@fortawesome/free-solid-svg-icons";
 import useUserList from "../hooks/useUserList";
+import LoadMore from "../components/LoadMore";
 
 function CommunityPage() {
   const [userIds, loadMoreUsers, hasMoreUsers, userError] = useUserList()
@@ -28,12 +29,7 @@ function CommunityPage() {
             ))}
 
             {hasMoreUsers && (
-              <button
-                className="w-full border-t px-5 py-6 bg-white rounded shadow font-bold text-blue-600 hover:text-blue-500"
-                onClick={loadMoreUsers}>
-                <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                Εμφάνιση περισσότερων
-              </button>
+              <LoadMore onClick={loadMoreUsers}/>
             )}
           </div>
         </main>

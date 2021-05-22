@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import {useCallback, useRef, useState} from "react";
 
-function useCommentList(postId) {
+function usePostCommentList(postId) {
   const [error, setError] = useState(false)
   const [commentIds, setCommentIds] = useState([])
   const [limit, setLimit] = useState(10)
@@ -28,7 +28,7 @@ function useCommentList(postId) {
       .orderBy("creationDate", "asc")
       .limit(limit)
       .onSnapshot(querySnapshot => {
-        console.debug("Updating comments.")
+        console.debug(`Fetch post comment list: ${postId}`)
 
         const docSize = querySnapshot.docs.length
         setHasMore(docSize >= limit)
@@ -42,7 +42,7 @@ function useCommentList(postId) {
       })
 
     commentCallback.current = () => {
-      console.debug("Unsubscribing from comments.")
+      console.debug(`Unsubscribe from post comment list: ${postId}`)
       unsubscribe()
     }
   }, [postId, stop, limit])
@@ -61,4 +61,4 @@ function useCommentList(postId) {
   ]
 }
 
-export default useCommentList
+export default usePostCommentList
