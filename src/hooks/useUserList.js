@@ -10,7 +10,7 @@ function useUserList() {
   useEffect(() => {
     firebase.firestore()
       .collection("users")
-      .orderBy("postCount", "desc")
+      .orderBy("creationDate", "desc")
       .limit(limit)
       .get()
       .then(querySnapshot => {
