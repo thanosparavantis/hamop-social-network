@@ -14,14 +14,7 @@ function useUser(userId) {
   const [creationDate, setCreationDate] = useState()
 
   useEffect(() => {
-    if (appCache.isCached(userId)
-      && username === undefined
-      && displayName === undefined
-      && photoURL === undefined
-      && postCount === undefined
-      && commentCount === undefined
-      && creationDate === undefined
-    ) {
+    if (appCache.isCached(userId)) {
       const user = appCache.getItem(userId)
       setUsername(user.username)
       setDisplayName(user.displayName)
@@ -29,7 +22,11 @@ function useUser(userId) {
       setPostCount(user.postCount)
       setCommentCount(user.commentCount)
       setCreationDate(new Date(user.creationDate))
-    } else if (!appCache.isCached(userId)
+    }
+  }, [userId, appCache])
+
+  useEffect(() => {
+    if (!appCache.isCached(userId)
       && username !== undefined
       && displayName !== undefined
       && photoURL !== undefined

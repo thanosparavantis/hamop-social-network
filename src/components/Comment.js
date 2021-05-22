@@ -49,7 +49,7 @@ function Comment({commentId, className = null}) {
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <Link to={`/${user.username}`} className="block hover:opacity-80">
-                <img src={user.photoURL} alt={user.username} className="h-10 rounded shadow-lg border"/>
+                <img src={user.photoURL} alt={user.username} className="w-10 h-10 rounded shadow-lg border"/>
               </Link>
               <div className="ml-3 flex flex-col text-sm">
                 <Link to={`/${user.username}`} className="block font-bold leading-none text-gray-900 hover:underline">

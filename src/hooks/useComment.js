@@ -11,16 +11,16 @@ function useComment(commentId) {
   const [creationDate, setCreationDate] = useState()
 
   useEffect(() => {
-    if (appCache.isCached(commentId)
-      && author === undefined
-      && content === undefined
-      && creationDate === undefined
-    ) {
+    if (appCache.isCached(commentId)) {
       const post = appCache.getItem(commentId)
       setAuthor(post.author)
       setContent(post.content)
       setCreationDate(new Date(post.creationDate))
-    } else if (!appCache.isCached(commentId)
+    }
+  }, [commentId, appCache])
+
+  useEffect(() => {
+    if (!appCache.isCached(commentId)
       && author !== undefined
       && content !== undefined
       && creationDate !== undefined

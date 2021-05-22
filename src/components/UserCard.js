@@ -33,7 +33,7 @@ function UserCard({userId, className = ""}) {
     return (
       <Link to={`/${user.username}`}
             className={`flex items-center bg-white p-5 rounded shadow focus:ring ${className}`}>
-        <img src={user.photoURL} alt={user.username} className="h-12 md:h-20 rounded shadow-lg border"/>
+        <img src={user.photoURL} alt={user.username} className="w-12 h-12 md:w-20 md:h-20 rounded shadow-lg border"/>
         <div className="ml-5">
           <div className="text-gray-900 font-bold leading-none">
             {user.displayName}

@@ -8,7 +8,7 @@ function PostBody({user, post}) {
     <div className="flex flex-col align-top bg-white p-5 rounded-t shadow">
       <div className="flex items-center flex-shrink-0">
         <Link to={`/${user.username}`} className="block hover:opacity-80">
-          <img src={user.photoURL} alt={user.username} className="h-12 rounded shadow-lg border"/>
+          <img src={user.photoURL} alt={user.username} className="w-12 h-12 rounded shadow-lg border"/>
         </Link>
         <div className="ml-3 flex flex-col">
           <Link to={`/${user.username}`} className="block font-bold leading-none text-gray-900 hover:underline">

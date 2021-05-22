@@ -13,18 +13,17 @@ function usePost(postId) {
   const [creationDate, setCreationDate] = useState()
 
   useEffect(() => {
-    if (appCache.isCached(postId)
-      && author === undefined
-      && content === undefined
-      && commentCount === undefined
-      && creationDate === undefined
-    ) {
+    if (appCache.isCached(postId)) {
       const post = appCache.getItem(postId)
       setAuthor(post.author)
       setContent(post.content)
       setCommentCount(post.commentCount)
       setCreationDate(new Date(post.creationDate))
-    } else if (!appCache.isCached(postId)
+    }
+  }, [postId, appCache])
+
+  useEffect(() => {
+    if (!appCache.isCached(postId)
       && author !== undefined
       && content !== undefined
       && commentCount !== undefined
