@@ -65,7 +65,7 @@ function UserCard({userId, className = null}) {
               {user.commentCount > 0 && (
                 <>
                   <div>
-                    <strong>{user.commentCount}</strong> {user.postCount > 1 ? "σχόλια" : "σχόλιο"}
+                    <strong>{user.commentCount}</strong> {user.commentCount > 1 ? "σχόλια" : "σχόλιο"}
                   </div>
                 </>
               )}
