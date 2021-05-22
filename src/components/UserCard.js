@@ -55,9 +55,15 @@ function UserCard({userId, className = null}) {
                   <strong>{user.postCount}</strong> {user.postCount > 1 ? "δημοσιεύσεις" : "δημοσίευση"}
                 </div>
               )}
+
+              {user.postCount > 0 && user.commentCount > 0 && (
+                <div className="mx-2 hidden md:block">
+                  &middot;
+                </div>
+              )}
+
               {user.commentCount > 0 && (
                 <>
-                  <div className="mx-2 hidden md:block">&middot;</div>
                   <div>
                     <strong>{user.commentCount}</strong> {user.postCount > 1 ? "σχόλια" : "σχόλιο"}
                   </div>
