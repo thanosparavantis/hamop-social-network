@@ -27,7 +27,6 @@ exports.createUserProfile = functions.auth.user().onCreate(async (user) => {
     .set({
       username: username,
       displayName: user.displayName,
-      email: user.email,
       photoURL: user.photoURL,
       creationDate: admin.firestore.Timestamp.now(),
     })
@@ -44,9 +43,18 @@ exports.createPost = functions.https.onCall((data, context) => {
     )
   }
 
-  const contentField = data.content
+  let contentField = data.content
 
-  if (!(typeof contentField === 'string') || contentField.length === 0 || contentField.length > 300) {
+  if (typeof contentField !== "string") {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Η δημοσίευση περιλαμβάνει μη έγκυρο περιεχόμενο."
+    )
+  }
+
+  contentField = contentField.trim()
+
+  if (contentField.length === 0 || contentField.length > 1000) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "Η δημοσίευση περιλαμβάνει μη έγκυρο περιεχόμενο."
@@ -77,9 +85,18 @@ exports.createComment = functions.https.onCall(async (data, context) => {
     )
   }
 
-  const contentField = data.content
+  let contentField = data.content
 
-  if (!(typeof contentField === 'string') || contentField.length === 0 || contentField.length > 300) {
+  if (typeof contentField !== "string") {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Το σχόλιο περιλαμβάνει μη έγκυρο περιεχόμενο."
+    )
+  }
+
+  contentField = contentField.trim()
+
+  if (contentField.length === 0 || contentField.length > 1000) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "Το σχόλιο περιλαμβάνει μη έγκυρο περιεχόμενο."

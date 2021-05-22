@@ -15,7 +15,7 @@ function CommentEditor({postId}) {
 
   const isContentFieldValid = useCallback(() => {
     const content = contentField.trim()
-    return content.length > 0 && content.length <= 300;
+    return content.length > 0 && content.length <= 1000;
   }, [contentField])
 
   const handleSubmit = useCallback((event = null) => {
@@ -65,7 +65,7 @@ function CommentEditor({postId}) {
         onChange={handleContentField}
         onKeyPress={handleKeyPress}
         value={contentField}
-        maxLength="300"
+        maxLength="1000"
         disabled={loading}
         required={true}/>
 

@@ -15,7 +15,7 @@ function PostEditor({className = null}) {
 
   const isContentFieldValid = useCallback(() => {
     const content = contentField.trim()
-    return content.length > 0 && content.length <= 300;
+    return content.length > 0 && content.length <= 1000;
   }, [contentField])
 
   const handleSubmit = useCallback(event => {
@@ -54,7 +54,7 @@ function PostEditor({className = null}) {
         placeholder="Γράψε μια δημοσίευση..."
         onChange={handleContentField}
         value={contentField}
-        maxLength="300"
+        maxLength="1000"
         disabled={loading}
         required={true}/>
 
