@@ -9,7 +9,7 @@ import LoadingPage from "./LoadingPage";
 
 function PostPage() {
   const {postId} = useParams()
-  const [post, postLoading, postError, postFound] = usePost(postId)
+  const [post, deletePost, postLoading, postError, postFound] = usePost(postId)
 
   if (!postFound) {
     return <NotFoundPage/>
