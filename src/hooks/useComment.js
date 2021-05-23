@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
@@ -10,70 +10,75 @@ function useComment(commentId) {
   const [content, setContent] = useState()
   const [creationDate, setCreationDate] = useState()
 
-  useEffect(() => {
+  const getFrom = useCallback(commentObj => {
+    setAuthor(commentObj.author)
+    setContent(commentObj.content)
+    setCreationDate(new Date(commentObj.creationDate))
+  }, [])
+
+  const getCached = useCallback(() => {
     if (appCache.isCached(commentId)) {
-      const post = appCache.getItem(commentId)
-      setAuthor(post.author)
-      setContent(post.content)
-      setCreationDate(new Date(post.creationDate))
+      getFrom(appCache.getItem(commentId))
     }
-  }, [commentId, appCache])
+  }, [commentId, appCache, getFrom])
 
   useEffect(() => {
-    if (!appCache.isCached(commentId)
-      && author !== undefined
-      && content !== undefined
-      && creationDate !== undefined
-    ) {
-      appCache.addItem(commentId, {
-        id: commentId,
-        author: author,
-        content: content,
-        creationDate: creationDate
-      })
+    getCached()
+
+    appCache.addListener(commentId, getFrom)
+
+    return () => {
+      appCache.removeListener(commentId, getFrom)
     }
-  }, [appCache, commentId, author, content, creationDate])
+  }, [commentId, getCached, appCache, getFrom])
 
   useEffect(() => {
     if (!commentId || appCache.isCached(commentId)) {
       return
     }
 
-    if (appCache.isCached(commentId)) {
-      const comment = appCache.getItem(commentId)
-      setAuthor(comment.author)
-      setContent(comment.content)
-      setCreationDate(new Date(comment.creationDate))
-    } else {
-      firebase.firestore()
-        .collection("comments")
-        .doc(commentId)
-        .get()
-        .then(doc => {
-          console.debug(`Fetch comment: ${commentId}`)
-          const data = doc.data()
-
-          if (!data) {
-            setError(true)
-            console.error("Comment record does not exist.")
-            return
-          }
-
-          setAuthor(data.author)
-          setContent(data.content)
-          setCreationDate(data.creationDate.toDate())
-        })
-        .catch(error => {
-          setError(true)
-          console.error(error)
-        })
+    const commentObj = {
+      id: commentId,
+      author: undefined,
+      content: undefined,
+      creationDate: undefined
     }
+
+    appCache.addItem(commentId, commentObj)
+
+    firebase.firestore()
+      .collection("comments")
+      .doc(commentId)
+      .get()
+      .then(doc => {
+        console.debug(`Fetch comment: ${commentId}`)
+        const data = doc.data()
+
+        if (!data) {
+          setError(true)
+          throw new Error("Comment record does not exist.")
+        }
+
+        const author = data.author
+        const content = data.content
+        const creationDate = data.creationDate.toDate()
+        setAuthor(author)
+        commentObj["author"] = author
+        setContent(content)
+        commentObj["content"] = content
+        setCreationDate(creationDate)
+        commentObj["creationDate"] = creationDate
+        appCache.addItem(commentId, commentObj)
+      })
+      .catch(error => {
+        setError(true)
+        console.error(error)
+      })
   }, [commentId, appCache])
 
   useEffect(() => {
-    if (author !== undefined
-      && content !== undefined
-      && creationDate !== undefined) {
+    if (author !== undefined && content !== undefined && creationDate !== undefined
+    ) {
       setLoading(false)
     }
   }, [author, content, creationDate])

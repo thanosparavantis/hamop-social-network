@@ -22,7 +22,7 @@ function Post({postId, expanded = false, className = null}) {
     return (
       <div className={className}>
         <div className={`bg-white p-5 rounded shadow text-center font-bold text-gray-600`}>
-          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg" className="mr-3"/>
+          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg"/>
         </div>
       </div>
     )

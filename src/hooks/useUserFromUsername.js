@@ -22,8 +22,7 @@ function useUserFromUsername(username) {
         console.log(`Fetch user id from username: ${username}`)
         if (docs.empty) {
           setFound(false)
-          console.error("User record does not exist.")
-          return
+          throw new Error("User record does not exist.")
         }
 
         setUID(docs.docs[0].id)

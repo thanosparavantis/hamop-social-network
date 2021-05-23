@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
@@ -13,43 +13,47 @@ function useUser(userId) {
   const [commentCount, setCommentCount] = useState()
   const [creationDate, setCreationDate] = useState()
 
-  useEffect(() => {
+  const getFrom = useCallback((userObj) => {
+    setUsername(userObj.username)
+    setDisplayName(userObj.displayName)
+    setPhotoURL(userObj.photoURL)
+    setPostCount(userObj.postCount)
+    setCommentCount(userObj.commentCount)
+    setCreationDate(new Date(userObj.creationDate))
+  }, [])
+
+  const getCached = useCallback(() => {
     if (appCache.isCached(userId)) {
-      const user = appCache.getItem(userId)
-      setUsername(user.username)
-      setDisplayName(user.displayName)
-      setPhotoURL(user.photoURL)
-      setPostCount(user.postCount)
-      setCommentCount(user.commentCount)
-      setCreationDate(new Date(user.creationDate))
+      getFrom(appCache.getItem(userId))
     }
-  }, [userId, appCache])
+  }, [userId, appCache, getFrom])
 
   useEffect(() => {
-    if (!appCache.isCached(userId)
-      && username !== undefined
-      && displayName !== undefined
-      && photoURL !== undefined
-      && postCount !== undefined
-      && commentCount !== undefined
-      && creationDate !== undefined
-    ) {
-      appCache.addItem(userId, {
-        uid: userId,
-        username: username,
-        displayName: displayName,
-        photoURL: photoURL,
-        postCount: postCount,
-        commentCount: commentCount,
-        creationDate: creationDate
-      })
+    getCached()
+
+    appCache.addListener(userId, getFrom)
+
+    return () => {
+      appCache.removeListener(userId, getFrom)
     }
-  }, [userId, appCache, username, displayName, photoURL, postCount, commentCount, creationDate])
+  }, [userId, getCached, appCache, getFrom])
 
   useEffect(() => {
     if (!userId || appCache.isCached(userId)) {
       return
     }
+
+    const userObj = {
+      uid: userId,
+      username: undefined,
+      displayName: undefined,
+      photoURL: undefined,
+      postCount: undefined,
+      commentCount: undefined,
+      creationDate: undefined,
+    }
+
+    appCache.addItem(userId, userObj)
 
     firebase.firestore()
       .collection("users")
@@ -61,52 +65,44 @@ function useUser(userId) {
 
         if (!data) {
           setError(true)
-          console.error("User record does not exist.")
-          return
+          throw new Error("User record does not exist.")
         }
 
-        setUsername(data.username)
-        setDisplayName(data.displayName)
+        const username = data.username
+        const displayName = data.displayName
+        const photoURL = data.photoURL
+        const creationDate = data.creationDate.toDate()
+        setUsername(username)
+        userObj["username"] = username
+        setDisplayName(displayName)
+        userObj["displayName"] = displayName
         setPhotoURL(data.photoURL)
-        setCreationDate(data.creationDate.toDate())
-      })
-      .catch(error => {
-        setError(true)
-        console.error(error)
-      })
-  }, [userId, appCache])
+        userObj["photoURL"] = photoURL
+        setCreationDate(creationDate)
+        userObj["creationDate"] = creationDate
 
-  useEffect(() => {
-    if (!userId || appCache.isCached(userId)) {
-      return
-    }
-
-    firebase.firestore()
-      .collection("posts")
-      .where("author", "==", userId)
-      .get()
+        return firebase.firestore()
+          .collection("posts")
+          .where("author", "==", userId)
+          .get()
+      })
       .then(querySnapshot => {
         console.debug(`Fetch user post count: ${userId}`)
-        setPostCount(querySnapshot.size)
-      })
-      .catch(error => {
-        setError(true)
-        console.error(error)
-      })
-  }, [userId, appCache])
+        const postCount = querySnapshot.size
+        setPostCount(postCount)
+        userObj["postCount"] = postCount
 
-  useEffect(() => {
-    if (!userId || appCache.isCached(userId)) {
-      return
-    }
-
-    firebase.firestore()
-      .collection("comments")
-      .where("author", "==", userId)
-      .get()
-      .then(querySnapshot => {
+        return firebase.firestore()
+          .collection("comments")
+          .where("author", "==", userId)
+          .get()
+      })
+      .then((querySnapshot) => {
         console.debug(`Fetch user comment count: ${userId}`)
-        setCommentCount(querySnapshot.size)
+        const commentCount = querySnapshot.size
+        setCommentCount(commentCount)
+        userObj["commentCount"] = commentCount
+        appCache.addItem(userId, userObj)
       })
       .catch(error => {
         setError(true)
@@ -115,12 +111,9 @@ function useUser(userId) {
   }, [userId, appCache])
 
   useEffect(() => {
-    if (username !== undefined
-      && displayName !== undefined
-      && photoURL !== undefined
-      && postCount !== undefined
-      && commentCount !== undefined
-      && creationDate !== undefined) {
+    if (username !== undefined && displayName !== undefined && photoURL !== undefined
+      && postCount !== undefined && commentCount !== undefined && creationDate !== undefined
+    ) {
       setLoading(false)
     }
   }, [username, displayName, photoURL, postCount, commentCount, creationDate])

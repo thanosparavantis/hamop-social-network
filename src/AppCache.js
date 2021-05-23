@@ -1,4 +1,6 @@
 export default class AppCache {
+  listeners = {}
+
   addItem(itemId, dataObj) {
     const now = new Date()
     now.setMinutes(now.getMinutes() + 10)
@@ -6,6 +8,32 @@ export default class AppCache {
 
     const dataStr = JSON.stringify(dataObj)
     sessionStorage.setItem(itemId, dataStr)
+
+    this.invokeListeners(itemId, dataObj)
+  }
+
+  addListener(itemId, callback) {
+    if (!Array.isArray(this.listeners[itemId])) {
+      this.listeners[itemId] = []
+    }
+
+    this.listeners[itemId].push(callback)
+  }
+
+  invokeListeners(itemId, dataObj) {
+    const callbacks = this.listeners[itemId]
+
+    if (Array.isArray(callbacks)) {
+      callbacks.forEach(callback => callback(dataObj))
+    }
+  }
+
+  removeListener(itemId, callback) {
+    const callbacks = this.listeners[itemId]
+
+    if (Array.isArray(callbacks)) {
+      callbacks.splice(callbacks.indexOf(callback), 1)
+    }
   }
 
   isCached(itemId) {

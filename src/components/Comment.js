@@ -38,7 +38,7 @@ function Comment({commentId, className = null}) {
     return (
       <div className={className}>
         <div className={`bg-gray-100 p-5 shadow border-t text-center font-bold text-gray-600`}>
-          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg" className="mr-3"/>
+          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg"/>
         </div>
       </div>
     )
