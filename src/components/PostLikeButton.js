@@ -3,22 +3,28 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThumbsUp} from "@fortawesome/free-solid-svg-icons";
 import useUserPostLike from "../hooks/useUserPostLike";
 import UserContext from "../context/UserContext";
-import {useCallback, useContext} from "react";
+import {useCallback, useContext, useEffect} from "react";
 
 function PostLikeButton({postId, className = null}) {
-  const [likeCount, increaseLikeCount, decreaseLikeCount, likeCountLoading] = usePostLikeCount(postId)
+  const [likeCount, startLikeCount, stopLikeCount] = usePostLikeCount(postId)
   const authUser = useContext(UserContext)
   const [like, unlike, hasLiked] = useUserPostLike(authUser.uid, postId)
+
+  useEffect(() => {
+    startLikeCount()
+
+    return () => {
+      stopLikeCount()
+    }
+  }, [startLikeCount, stopLikeCount])
 
   const handleClick = useCallback(() => {
     if (hasLiked) {
       unlike()
-      decreaseLikeCount()
     } else {
       like()
-      increaseLikeCount()
     }
-  }, [hasLiked, like, unlike, increaseLikeCount, decreaseLikeCount])
+  }, [hasLiked, like, unlike])
 
   return (
     <div className={className}>
@@ -26,7 +32,7 @@ function PostLikeButton({postId, className = null}) {
                           ${hasLiked ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
               onClick={handleClick}>
         <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
-        {likeCountLoading ? "-" : likeCount}
+        {likeCount ? likeCount : "-"}
       </button>
     </div>
   )

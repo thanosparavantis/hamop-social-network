@@ -5,7 +5,15 @@ import usePostCommentCount from "../hooks/usePostCommentCount";
 
 function PostCommentButton({postId, onOpen, onClose, isOpen = false, className = null}) {
   const [open, setOpen] = useState(isOpen)
-  const [commentCount, commentCountLoading] = usePostCommentCount(postId)
+  const [commentCount, startCommentCount, stopCommentCount] = usePostCommentCount(postId)
+
+  useEffect(() => {
+    startCommentCount()
+
+    return () => {
+      stopCommentCount()
+    }
+  }, [startCommentCount, stopCommentCount])
 
   const handleClick = useCallback(() => {
     setOpen(oldOpen => !oldOpen)
@@ -26,7 +34,7 @@ function PostCommentButton({postId, onOpen, onClose, isOpen = false, className =
               onClick={handleClick}
       >
         <FontAwesomeIcon icon={faComments} className="mr-2"/>
-        {(commentCountLoading || commentCount === 0) && (
+        {!commentCount && (
           <>Σχόλια</>
         )}
 

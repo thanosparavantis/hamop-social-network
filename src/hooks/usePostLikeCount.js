@@ -1,89 +1,47 @@
-import {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import firebase from "firebase/app";
-import AppCacheContext from "../context/AppCacheContext";
 
-function usePostCommentCount(postId) {
-  const appCache = useContext(AppCacheContext)
-  const [loading, setLoading] = useState(true)
+function usePostLikeCount(postId) {
   const [error, setError] = useState(false)
   const [count, setCount] = useState()
-  const cacheKey = useMemo(() => {
-    return `PostLikeCount-${postId}`
-  }, [postId])
+  const callback = useRef()
 
-  const getFrom = useCallback((countObj) => {
-    setCount(countObj.count)
+  const stop = useCallback(() => {
+    if (callback.current) {
+      callback.current()
+      callback.current = null
+    }
   }, [])
 
-  const getCached = useCallback(() => {
-    if (appCache.isCached(cacheKey)) {
-      getFrom(appCache.getItem(cacheKey))
-    }
-  }, [cacheKey, appCache, getFrom])
 
-  const increase = useCallback(() => {
-    appCache.addItem(cacheKey, {count: count + 1})
-  }, [appCache, cacheKey, count])
-
-  const decrease = useCallback(() => {
-    appCache.addItem(cacheKey, {count: count -1})
-  }, [appCache, cacheKey, count])
-
-  useEffect(() => {
+  const start = useCallback(() => {
     if (!postId) {
       return
     }
 
-    getCached()
-
-    appCache.addListener(cacheKey, getFrom)
-
-    return () => {
-      appCache.removeListener(cacheKey, getFrom)
-    }
-  }, [postId, cacheKey, getCached, appCache, getFrom])
-
-  useEffect(() => {
-    if (!postId || appCache.isCached(cacheKey)) {
-      return
-    }
-
-    const countObj = {
-      count: undefined
-    }
-
-    appCache.addItem(cacheKey, countObj)
-
-    firebase.firestore()
+    const unsubscribe = firebase.firestore()
       .collection("likes")
       .where("post", "==", postId)
-      .get()
-      .then(querySnapshot => {
+      .onSnapshot(querySnapshot => {
         console.debug(`Fetch post like count: ${postId}`)
-        const count = querySnapshot.size
-        setCount(count)
-        countObj["count"] = count
-        appCache.addItem(cacheKey, countObj)
-      })
-      .catch(error => {
+        setCount(querySnapshot.size)
+      }, error => {
         setError(true)
         console.error(error)
       })
-  }, [postId, cacheKey, appCache])
 
-  useEffect(() => {
-    if (count !== undefined) {
-      setLoading(false)
+    callback.current = () => {
+      console.debug(`Unsubscribe from post like count: ${postId}`)
+      unsubscribe()
     }
-  }, [count])
+  }, [postId])
 
   return [
     count,
-    increase,
-    decrease,
-    loading,
+    start,
+    stop,
     error
   ]
 }
 
-export default usePostCommentCount
+export default usePostLikeCount

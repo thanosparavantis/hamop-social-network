@@ -6,12 +6,12 @@ function usePostCommentList(postId) {
   const [commentIds, setCommentIds] = useState([])
   const [limit, setLimit] = useState(10)
   const [hasMore, setHasMore] = useState(false)
-  const commentCallback = useRef()
+  const callback = useRef()
 
   const stop = useCallback(() => {
-    if (commentCallback.current) {
-      commentCallback.current()
-      commentCallback.current = null
+    if (callback.current) {
+      callback.current()
+      callback.current = null
     }
   }, [])
 
@@ -41,7 +41,7 @@ function usePostCommentList(postId) {
         console.error(error)
       })
 
-    commentCallback.current = () => {
+    callback.current = () => {
       console.debug(`Unsubscribe from post comment list: ${postId}`)
       unsubscribe()
     }

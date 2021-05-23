@@ -6,12 +6,12 @@ function useUserPostList(userId) {
   const [postIds, setPostIds] = useState([])
   const [limit, setLimit] = useState(20)
   const [hasMore, setHasMore] = useState(false)
-  const postCallback = useRef()
+  const callback = useRef()
 
   const stop = useCallback(() => {
-    if (postCallback.current) {
-      postCallback.current()
-      postCallback.current = null
+    if (callback.current) {
+      callback.current()
+      callback.current = null
     }
   }, [])
 
@@ -39,7 +39,7 @@ function useUserPostList(userId) {
         console.error(error)
       })
 
-    postCallback.current = () => {
+    callback.current = () => {
       console.debug(`Unsubscribe from user post list: ${userId}`)
       unsubscribe()
     }

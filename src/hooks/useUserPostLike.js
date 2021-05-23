@@ -2,7 +2,7 @@ import {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
-function usePostCommentCount(userId, postId) {
+function useUserPostLike(userId, postId) {
   const appCache = useContext(AppCacheContext)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -120,4 +120,4 @@ function usePostCommentCount(userId, postId) {
   ]
 }
 
-export default usePostCommentCount
+export default useUserPostLike
