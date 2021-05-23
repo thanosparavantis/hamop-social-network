@@ -29,11 +29,16 @@ function useUser(userId) {
   }, [userId, appCache, getFrom])
 
   useEffect(() => {
+    if (!userId) {
+      return
+    }
+
     getCached()
 
     appCache.addListener(userId, getFrom)
 
     return () => {
+      console.log("REMOVE USER LISTENER")
       appCache.removeListener(userId, getFrom)
     }
   }, [userId, getCached, appCache, getFrom])

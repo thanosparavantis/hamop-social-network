@@ -26,11 +26,16 @@ function usePost(postId) {
   }, [postId, appCache, getFrom])
 
   useEffect(() => {
+    if (!postId) {
+      return
+    }
+
     getCached()
 
     appCache.addListener(postId, getFrom)
 
     return () => {
+      console.log("REMOVE POST LISTENER")
       appCache.removeListener(postId, getFrom)
     }
   }, [postId, getCached, appCache, getFrom])

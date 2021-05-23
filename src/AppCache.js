@@ -1,4 +1,5 @@
 export default class AppCache {
+  memory = {}
   listeners = {}
 
   addItem(itemId, dataObj) {
@@ -6,6 +7,7 @@ export default class AppCache {
     now.setMinutes(now.getMinutes() + 10)
     dataObj["validity"] = now.getTime()
 
+    this.memory[itemId] = dataObj
     const dataStr = JSON.stringify(dataObj)
     sessionStorage.setItem(itemId, dataStr)
 
@@ -37,11 +39,16 @@ export default class AppCache {
   }
 
   isCached(itemId) {
-    const dataStr = sessionStorage.getItem(itemId)
-    const dataObj = JSON.parse(dataStr)
+    let dataObj
 
-    if (dataObj === null) {
-      return false
+    if (this.memory[itemId]) {
+      dataObj = this.memory[itemId]
+    } else {
+      dataObj = JSON.parse(sessionStorage.getItem(itemId))
+
+      if (dataObj === null) {
+        return false
+      }
     }
 
     const now = new Date()
@@ -54,7 +61,10 @@ export default class AppCache {
   }
 
   getItem(itemId) {
-    const dataStr = sessionStorage.getItem(itemId)
-    return JSON.parse(dataStr)
+    if (this.memory[itemId]) {
+      return this.memory[itemId]
+    } else {
+      return JSON.parse(sessionStorage.getItem(itemId))
+    }
   }
 }

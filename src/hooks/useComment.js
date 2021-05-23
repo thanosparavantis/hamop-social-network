@@ -1,6 +1,7 @@
 import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
+import {comment} from "postcss";
 
 function useComment(commentId) {
   const appCache = useContext(AppCacheContext)
@@ -23,11 +24,16 @@ function useComment(commentId) {
   }, [commentId, appCache, getFrom])
 
   useEffect(() => {
+    if (!commentId) {
+      return
+    }
+
     getCached()
 
     appCache.addListener(commentId, getFrom)
 
     return () => {
+      console.log("REMOVE COMMENT LISTENER")
       appCache.removeListener(commentId, getFrom)
     }
   }, [commentId, getCached, appCache, getFrom])
