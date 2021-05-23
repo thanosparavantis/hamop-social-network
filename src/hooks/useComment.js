@@ -1,7 +1,6 @@
 import {useCallback, useContext, useEffect, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
-import {comment} from "postcss";
 
 function useComment(commentId) {
   const appCache = useContext(AppCacheContext)
