@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
@@ -9,24 +9,23 @@ function useUser(userId) {
   const [username, setUsername] = useState()
   const [displayName, setDisplayName] = useState()
   const [photoURL, setPhotoURL] = useState()
-  const [postCount, setPostCount] = useState()
-  const [commentCount, setCommentCount] = useState()
   const [creationDate, setCreationDate] = useState()
+  const cacheKey = useMemo(() => {
+    return `User-${userId}`
+  }, [userId])
 
   const getFrom = useCallback((userObj) => {
     setUsername(userObj.username)
     setDisplayName(userObj.displayName)
     setPhotoURL(userObj.photoURL)
-    setPostCount(userObj.postCount)
-    setCommentCount(userObj.commentCount)
     setCreationDate(new Date(userObj.creationDate))
   }, [])
 
   const getCached = useCallback(() => {
-    if (appCache.isCached(userId)) {
-      getFrom(appCache.getItem(userId))
+    if (appCache.isCached(cacheKey)) {
+      getFrom(appCache.getItem(cacheKey))
     }
-  }, [userId, appCache, getFrom])
+  }, [cacheKey, appCache, getFrom])
 
   useEffect(() => {
     if (!userId) {
@@ -35,16 +34,15 @@ function useUser(userId) {
 
     getCached()
 
-    appCache.addListener(userId, getFrom)
+    appCache.addListener(cacheKey, getFrom)
 
     return () => {
-      console.log("REMOVE USER LISTENER")
-      appCache.removeListener(userId, getFrom)
+      appCache.removeListener(cacheKey, getFrom)
     }
-  }, [userId, getCached, appCache, getFrom])
+  }, [userId, cacheKey, getCached, appCache, getFrom])
 
   useEffect(() => {
-    if (!userId || appCache.isCached(userId)) {
+    if (!userId || appCache.isCached(cacheKey)) {
       return
     }
 
@@ -53,12 +51,10 @@ function useUser(userId) {
       username: undefined,
       displayName: undefined,
       photoURL: undefined,
-      postCount: undefined,
-      commentCount: undefined,
       creationDate: undefined,
     }
 
-    appCache.addItem(userId, userObj)
+    appCache.addItem(cacheKey, userObj)
 
     firebase.firestore()
       .collection("users")
@@ -86,42 +82,19 @@ function useUser(userId) {
         setCreationDate(creationDate)
         userObj["creationDate"] = creationDate
 
-        return firebase.firestore()
-          .collection("posts")
-          .where("author", "==", userId)
-          .get()
-      })
-      .then(querySnapshot => {
-        console.debug(`Fetch user post count: ${userId}`)
-        const postCount = querySnapshot.size
-        setPostCount(postCount)
-        userObj["postCount"] = postCount
-
-        return firebase.firestore()
-          .collection("comments")
-          .where("author", "==", userId)
-          .get()
-      })
-      .then((querySnapshot) => {
-        console.debug(`Fetch user comment count: ${userId}`)
-        const commentCount = querySnapshot.size
-        setCommentCount(commentCount)
-        userObj["commentCount"] = commentCount
-        appCache.addItem(userId, userObj)
+        appCache.addItem(cacheKey, userObj)
       })
       .catch(error => {
         setError(true)
         console.error(error)
       })
-  }, [userId, appCache])
+  }, [userId, cacheKey, appCache])
 
   useEffect(() => {
-    if (username !== undefined && displayName !== undefined && photoURL !== undefined
-      && postCount !== undefined && commentCount !== undefined && creationDate !== undefined
-    ) {
+    if (username !== undefined && displayName !== undefined && photoURL !== undefined && creationDate !== undefined) {
       setLoading(false)
     }
-  }, [username, displayName, photoURL, postCount, commentCount, creationDate])
+  }, [username, displayName, photoURL, creationDate])
 
   return [
     {
@@ -129,8 +102,6 @@ function useUser(userId) {
       username: username,
       displayName: displayName,
       photoURL: photoURL,
-      postCount: postCount,
-      commentCount: commentCount,
       creationDate: creationDate,
     },
     loading,

@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
@@ -9,21 +9,22 @@ function usePost(postId) {
   const [found, setFound] = useState(true)
   const [author, setAuthor] = useState()
   const [content, setContent] = useState()
-  const [commentCount, setCommentCount] = useState()
   const [creationDate, setCreationDate] = useState()
+  const cacheKey = useMemo(() => {
+    return `Post-${postId}`
+  }, [postId])
 
   const getFrom = useCallback(postObj => {
     setAuthor(postObj.author)
     setContent(postObj.content)
-    setCommentCount(postObj.commentCount)
     setCreationDate(new Date(postObj.creationDate))
   }, [])
 
   const getCached = useCallback(() => {
-    if (appCache.isCached(postId)) {
-      getFrom(appCache.getItem(postId))
+    if (appCache.isCached(cacheKey)) {
+      getFrom(appCache.getItem(cacheKey))
     }
-  }, [postId, appCache, getFrom])
+  }, [cacheKey, appCache, getFrom])
 
   useEffect(() => {
     if (!postId) {
@@ -32,16 +33,15 @@ function usePost(postId) {
 
     getCached()
 
-    appCache.addListener(postId, getFrom)
+    appCache.addListener(cacheKey, getFrom)
 
     return () => {
-      console.log("REMOVE POST LISTENER")
-      appCache.removeListener(postId, getFrom)
+      appCache.removeListener(cacheKey, getFrom)
     }
-  }, [postId, getCached, appCache, getFrom])
+  }, [postId, cacheKey, getCached, appCache, getFrom])
 
   useEffect(() => {
-    if (!postId || appCache.isCached(postId)) {
+    if (!postId || appCache.isCached(cacheKey)) {
       return
     }
 
@@ -49,11 +49,10 @@ function usePost(postId) {
       id: postId,
       author: undefined,
       content: undefined,
-      commentCount: undefined,
       creationDate: undefined
     }
 
-    appCache.addItem(postId, postObj)
+    appCache.addItem(cacheKey, postObj)
 
     firebase.firestore()
       .collection("posts")
@@ -78,38 +77,25 @@ function usePost(postId) {
         setCreationDate(creationDate)
         postObj["creationDate"] = creationDate
 
-        return firebase.firestore()
-          .collection("comments")
-          .where("post", "==", postId)
-          .get()
-      })
-      .then(querySnapshot => {
-        console.debug(`Fetch post comment count: ${postId}`)
-        const commentCount = querySnapshot.size
-        setCommentCount(commentCount)
-        postObj["commentCount"] = commentCount
-        appCache.addItem(postId, postObj)
-      })
-      .catch(error => {
-        setError(true)
-        console.error(error)
-      })
-  }, [postId, appCache])
+        appCache.addItem(cacheKey, postObj)
+      }).catch(error => {
+      setError(true)
+      console.error(error)
+    })
+  }, [postId, cacheKey, appCache])
 
   useEffect(() => {
-    if (author !== undefined && content !== undefined
-      && commentCount !== undefined && creationDate !== undefined
+    if (author !== undefined && content !== undefined && creationDate !== undefined
     ) {
       setLoading(false)
     }
-  }, [author, content, commentCount, creationDate])
+  }, [author, content, creationDate])
 
   return [
     {
       id: postId,
       author: author,
       content: content,
-      commentCount: commentCount,
       creationDate: creationDate,
     },
     loading,

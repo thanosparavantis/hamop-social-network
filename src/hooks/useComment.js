@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useMemo, useState} from "react";
 import firebase from "firebase/app";
 import AppCacheContext from "../context/AppCacheContext";
 
@@ -9,6 +9,9 @@ function useComment(commentId) {
   const [author, setAuthor] = useState()
   const [content, setContent] = useState()
   const [creationDate, setCreationDate] = useState()
+  const cacheKey = useMemo(() => {
+    return `Comment-${commentId}`
+  }, [commentId])
 
   const getFrom = useCallback(commentObj => {
     setAuthor(commentObj.author)
@@ -17,10 +20,10 @@ function useComment(commentId) {
   }, [])
 
   const getCached = useCallback(() => {
-    if (appCache.isCached(commentId)) {
-      getFrom(appCache.getItem(commentId))
+    if (appCache.isCached(cacheKey)) {
+      getFrom(appCache.getItem(cacheKey))
     }
-  }, [commentId, appCache, getFrom])
+  }, [cacheKey, appCache, getFrom])
 
   useEffect(() => {
     if (!commentId) {
@@ -29,16 +32,15 @@ function useComment(commentId) {
 
     getCached()
 
-    appCache.addListener(commentId, getFrom)
+    appCache.addListener(cacheKey, getFrom)
 
     return () => {
-      console.log("REMOVE COMMENT LISTENER")
-      appCache.removeListener(commentId, getFrom)
+      appCache.removeListener(cacheKey, getFrom)
     }
-  }, [commentId, getCached, appCache, getFrom])
+  }, [commentId, cacheKey, getCached, appCache, getFrom])
 
   useEffect(() => {
-    if (!commentId || appCache.isCached(commentId)) {
+    if (!commentId || appCache.isCached(cacheKey)) {
       return
     }
 
@@ -49,7 +51,7 @@ function useComment(commentId) {
       creationDate: undefined
     }
 
-    appCache.addItem(commentId, commentObj)
+    appCache.addItem(cacheKey, commentObj)
 
     firebase.firestore()
       .collection("comments")
@@ -73,13 +75,13 @@ function useComment(commentId) {
         commentObj["content"] = content
         setCreationDate(creationDate)
         commentObj["creationDate"] = creationDate
-        appCache.addItem(commentId, commentObj)
+        appCache.addItem(cacheKey, commentObj)
       })
       .catch(error => {
         setError(true)
         console.error(error)
       })
-  }, [commentId, appCache])
+  }, [commentId, cacheKey, appCache])
 
   useEffect(() => {
     if (author !== undefined && content !== undefined && creationDate !== undefined

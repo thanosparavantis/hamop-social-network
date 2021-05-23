@@ -1,5 +1,4 @@
 import {Link} from "react-router-dom";
-import StarsBadge from "./StarsBadge";
 import TimeAgo from "timeago-react";
 import Linkify from "react-linkify";
 
@@ -15,12 +14,9 @@ function PostBody({user, post}) {
             {user.displayName}
           </Link>
 
-          <div className="flex items-center mt-1">
-            <StarsBadge user={user} className="mr-2"/>
-            <Link to={`/post/${post.id}`} className="block text-sm text-gray-600 hover:underline">
-              <TimeAgo datetime={post.creationDate} locale="el"/>
-            </Link>
-          </div>
+          <Link to={`/post/${post.id}`} className="mt-1 text-sm text-gray-600 hover:underline">
+            <TimeAgo datetime={post.creationDate} locale="el"/>
+          </Link>
         </div>
       </div>
       <div className="mt-3 whitespace-pre-line break-words text-gray-900">

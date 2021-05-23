@@ -1,22 +1,37 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStar} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faExclamationTriangle, faStar} from "@fortawesome/free-solid-svg-icons";
+import useUserPostCount from "../hooks/useUserPostCount";
+import useUserCommentCount from "../hooks/useUserCommentCount";
 
-function StarsBadge({user, className = null}) {
-  const stars = user.postCount + user.commentCount
-  const starDisplay = stars.toLocaleString("el-GR")
-  let bgColor = "bg-gray-200"
+function StarsBadge({userId, className = null}) {
+  const [postCount, postCountLoading, postCountError] = useUserPostCount(userId)
+  const [commentCount, commentCountLoading, commentCountError] = useUserCommentCount(userId)
 
-  if (stars >= 1000) {
-    bgColor = "bg-red-400"
-  } else if (stars >= 500) {
-    bgColor = "bg-yellow-400"
-  } else if (stars >= 100) {
-    bgColor = "bg-yellow-300"
-  }
-
-  if (stars === 0) {
-    return (<></>)
+  if (postCountError || commentCountError) {
+    return (
+      <div className={className}>
+        <FontAwesomeIcon icon={faExclamationTriangle} className="text-red-500"/>
+      </div>
+    )
+  } else if (postCountLoading || commentCountLoading) {
+    return (
+      <div className={className}>
+        <FontAwesomeIcon icon={faCircleNotch} spin={true}/>
+      </div>
+    )
   } else {
+    const stars = postCount + commentCount
+    const starDisplay = stars.toLocaleString("el-GR")
+    let bgColor = "bg-gray-200"
+
+    if (stars >= 1000) {
+      bgColor = "bg-red-400"
+    } else if (stars >= 500) {
+      bgColor = "bg-yellow-400"
+    } else if (stars >= 100) {
+      bgColor = "bg-yellow-300"
+    }
+
     return (
       <div className={className}>
         <div className={`text-sm md:text-xs font-bold px-1 shadow rounded text-gray-900 select-none ${bgColor}`}>

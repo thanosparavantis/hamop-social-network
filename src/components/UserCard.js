@@ -1,34 +1,31 @@
 import {Link} from "react-router-dom";
 import TimeAgo from "timeago-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
 import StarsBadge from "./StarsBadge";
+import useUserPostCount from "../hooks/useUserPostCount";
+import useUserCommentCount from "../hooks/useUserCommentCount";
 
 function UserCard({userId, className = null}) {
-  const [user, loading, error] = useUser(userId)
+  const [user, userLoading, userError] = useUser(userId)
+  const [postCount, postCountLoading, postCountError] = useUserPostCount(userId)
+  const [commentCount, commentCountLoading, commentCountError] = useUserCommentCount(userId)
 
-  if (error) {
+  if (userError || postCountError || commentCountError) {
     return (
       <div className={className}>
-        <div className="whitespace-pre-line break-words bg-white p-5 rounded shadow text-center font-bold text-red-600">
-          {error.code && (
-            <div className="font-bold">
-              {error.code}
-            </div>
-          )}
-
-          <div>
-            {error.message}
-          </div>
+        <div className="bg-white font-bold p-5 rounded shadow text-red-600 text-center">
+          <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2"/>
+          Υπήρξε κάποιο τεχνικό θέμα, παρακαλώ προσπαθήστε αργότερα
         </div>
       </div>
     )
-  } else if (loading) {
+  } else if (userLoading || postCountLoading || commentCountLoading) {
     return (
       <div className={className}>
         <div className="bg-white p-5 rounded shadow text-center font-bold text-gray-600">
-          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg" className="mr-3"/>
+          <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg"/>
         </div>
       </div>
     )
@@ -42,30 +39,30 @@ function UserCard({userId, className = null}) {
           <div className="mt-3 md:mt-0 md:ml-5">
             <div className="flex items-center justify-center md:justify-start
                             mb-3 text-gray-900 font-bold leading-none">
-              <StarsBadge user={user} className="mr-2 hidden md:block"/>
+              <StarsBadge userId={userId} className="mr-2 hidden md:block"/>
               {user.displayName}
             </div>
-            <StarsBadge user={user} className="flex items-center justify-center mb-2 block md:hidden"/>
+            <StarsBadge userId={userId} className="flex items-center justify-center mb-2 block md:hidden"/>
             <div className="text-sm text-gray-600">
               Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
             </div>
             <div className="flex items-center flex-col md:flex-row text-sm text-gray-600">
-              {user.postCount > 0 && (
+              {postCount > 0 && (
                 <div>
-                  <strong>{user.postCount}</strong> {user.postCount > 1 ? "δημοσιεύσεις" : "δημοσίευση"}
+                  <strong>{postCount}</strong> {postCount > 1 ? "δημοσιεύσεις" : "δημοσίευση"}
                 </div>
               )}
 
-              {user.postCount > 0 && user.commentCount > 0 && (
+              {postCount > 0 && commentCount > 0 && (
                 <div className="mx-2 hidden md:block">
                   &middot;
                 </div>
               )}
 
-              {user.commentCount > 0 && (
+              {commentCount > 0 && (
                 <>
                   <div>
-                    <strong>{user.commentCount}</strong> {user.commentCount > 1 ? "σχόλια" : "σχόλιο"}
+                    <strong>{commentCount}</strong> {commentCount > 1 ? "σχόλια" : "σχόλιο"}
                   </div>
                 </>
               )}

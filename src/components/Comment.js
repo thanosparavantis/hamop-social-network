@@ -7,7 +7,6 @@ import TimeAgo from "timeago-react";
 import UserContext from "../context/UserContext";
 import useComment from "../hooks/useComment";
 import useUser from "../hooks/useUser";
-import StarsBadge from "./StarsBadge";
 import Linkify from "react-linkify";
 import DeleteButton from "./DeleteButton";
 
@@ -56,10 +55,7 @@ function Comment({commentId, className = null}) {
                   {user.displayName}
                 </Link>
 
-                <div className="flex items-center mt-1">
-                  <StarsBadge user={user} className="mr-2"/>
-                  <TimeAgo datetime={comment.creationDate} className="text-gray-600" locale="el"/>
-                </div>
+                <TimeAgo datetime={comment.creationDate} className="mt-1 text-gray-600" locale="el"/>
               </div>
             </div>
 

@@ -1,5 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComments, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faComments, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import DeleteButton from "./DeleteButton";
 import Comment from "./Comment";
 import LoadMore from "./LoadMore";
@@ -8,9 +8,11 @@ import usePostCommentList from "../hooks/usePostCommentList";
 import {useCallback, useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext";
 import firebase from "firebase/app";
+import usePostCommentCount from "../hooks/usePostCommentCount";
 
 function PostFooter({post, expanded = false}) {
   const authUser = useContext(UserContext)
+  const [commentCount, commentCountLoading, commentCountError] = usePostCommentCount(post.id)
   const [commentIds, startComments, stopComments, loadMoreComments, hasMoreComments, commentError] = usePostCommentList(post.id)
   const [commentsOpen, setCommentsOpen] = useState(expanded)
   const [error, setError] = useState(false)
@@ -41,15 +43,20 @@ function PostFooter({post, expanded = false}) {
     }
   }, [stopComments])
 
-  if (error || commentError) {
+  if (error || commentError || commentCountError) {
     return (
       <div className="bg-gray-100 font-bold p-5 shadow border-t text-red-600 text-center">
         <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2"/>
         Υπήρξε κάποιο τεχνικό θέμα, παρακαλώ προσπαθήστε αργότερα
       </div>
     )
+  } else if (commentCountLoading) {
+    return (
+      <div className="shadow p-5 bg-white border-t text-center">
+        <FontAwesomeIcon icon={faCircleNotch} spin={true} size="lg"/>
+      </div>
+    )
   } else {
-    const commentCount = post.commentCount.toLocaleString("el-GR")
     return (
       <>
         <div className="shadow px-5 py-2 bg-white border-t flex items-center justify-between">
@@ -57,14 +64,14 @@ function PostFooter({post, expanded = false}) {
                   ${commentsOpen ? "bg-gray-200 text-gray-900" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
                   onClick={handleCommentClick}>
             <FontAwesomeIcon icon={faComments} className="mr-2"/>
-            {post.commentCount === 0 && (
+            {commentCount === 0 && (
               <>Σχόλια</>
             )}
-            {post.commentCount === 1 && (
+            {commentCount === 1 && (
               <span>{commentCount} σχόλιο</span>
             )}
 
-            {post.commentCount > 1 && (
+            {commentCount > 1 && (
               <span>{commentCount} σχόλια</span>
             )}
           </button>
