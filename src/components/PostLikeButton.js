@@ -32,7 +32,7 @@ function PostLikeButton({postId, className = null}) {
                           ${hasLiked ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
               onClick={handleClick}>
         <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
-        {likeCount ? likeCount : "-"}
+        {likeCount ? likeCount : 0}
       </button>
     </div>
   )
