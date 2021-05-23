@@ -39,6 +39,17 @@ function useComment(commentId) {
     }
   }, [commentId, cacheKey, getCached, appCache, getFrom])
 
+  const deleteComment = useCallback(() => {
+    firebase.firestore()
+      .collection("comments")
+      .doc(commentId)
+      .delete()
+      .catch(error => {
+        setError(true)
+        console.error(error)
+      })
+  }, [commentId])
+
   useEffect(() => {
     if (!commentId || appCache.isCached(cacheKey)) {
       return
@@ -58,7 +69,7 @@ function useComment(commentId) {
       .doc(commentId)
       .get()
       .then(doc => {
-        console.debug(`Fetch comment: ${commentId}`)
+        console.debug(`Fetch comment.`)
         const data = doc.data()
 
         if (!data) {
@@ -96,6 +107,7 @@ function useComment(commentId) {
       content: content,
       creationDate: creationDate,
     },
+    deleteComment,
     loading,
     error,
   ]

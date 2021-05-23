@@ -24,7 +24,7 @@ function usePostCommentCount(postId) {
       .collection("comments")
       .where("post", "==", postId)
       .onSnapshot(querySnapshot => {
-        console.debug(`Fetch post comment count: ${postId}`)
+        console.debug(`Fetch post comment count.`)
         setCount(querySnapshot.size)
       }, error => {
         setError(true)
@@ -32,7 +32,7 @@ function usePostCommentCount(postId) {
       })
 
     callback.current = () => {
-      console.debug(`Unsubscribe from post comment count: ${postId}`)
+      console.debug(`Unsubscribe from post comment count.`)
       unsubscribe()
     }
   }, [postId, stop])

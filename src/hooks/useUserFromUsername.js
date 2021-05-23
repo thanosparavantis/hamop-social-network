@@ -19,7 +19,7 @@ function useUserFromUsername(username) {
       .where("username", "==", username)
       .get()
       .then(docs => {
-        console.log(`Fetch user id from username: ${username}`)
+        console.log(`Fetch user id from username.`)
         if (docs.empty) {
           setFound(false)
           throw new Error("User record does not exist.")

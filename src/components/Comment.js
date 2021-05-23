@@ -1,5 +1,4 @@
-import {useCallback, useContext, useState} from "react";
-import firebase from "firebase/app";
+import {useContext} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
@@ -12,19 +11,10 @@ import DeleteButton from "./DeleteButton";
 
 function Comment({commentId, className = null}) {
   const authUser = useContext(UserContext)
-  const [comment, commentLoading, commentError] = useComment(commentId)
+  const [comment, deleteComment, commentLoading, commentError] = useComment(commentId)
   const [user, userLoading, userError] = useUser(comment.author)
-  const [error, setError] = useState()
 
-  const deleteComment = useCallback(() => {
-    firebase.firestore()
-      .collection("comments")
-      .doc(commentId)
-      .delete()
-      .catch(error => setError(error))
-  }, [commentId])
-
-  if (error || commentError || userError) {
+  if (commentError || userError) {
     return (
       <div className={className}>
         <div className={`whitespace-pre-line break-words bg-gray-100

@@ -61,7 +61,7 @@ function useUser(userId) {
       .doc(userId)
       .get()
       .then(doc => {
-        console.debug(`Fetch user: ${userId}`)
+        console.debug(`Fetch user.`)
         const data = doc.data()
 
         if (!data) {

@@ -7,15 +7,13 @@ import CommentEditor from "./CommentEditor";
 import usePostCommentList from "../hooks/usePostCommentList";
 import {useCallback, useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext";
-import firebase from "firebase/app";
 import PostLikeButton from "./PostLikeButton";
 import PostCommentButton from "./PostCommentButton";
 
-function PostFooter({post, isExpanded = false}) {
+function PostFooter({post, deletePost, isExpanded = false}) {
   const authUser = useContext(UserContext)
   const [commentIds, startComments, stopComments, loadMoreComments, hasMoreComments, commentError] = usePostCommentList(post.id)
   const [expanded, setExpanded] = useState(isExpanded)
-  const [error, setError] = useState(false)
 
   const onCommentsOpen = useCallback(() => {
     startComments()
@@ -27,21 +25,13 @@ function PostFooter({post, isExpanded = false}) {
     setExpanded(false)
   }, [stopComments])
 
-  const deletePost = useCallback(() => {
-    firebase.firestore()
-      .collection("posts")
-      .doc(post.id)
-      .delete()
-      .catch(error => setError(error))
-  }, [post])
-
   useEffect(() => {
     return () => {
       stopComments()
     }
   }, [stopComments])
 
-  if (error || commentError) {
+  if (commentError) {
     return (
       <div className="bg-gray-100 font-bold p-5 shadow border-t text-red-600 text-center">
         <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2"/>

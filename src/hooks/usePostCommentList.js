@@ -28,7 +28,7 @@ function usePostCommentList(postId) {
       .orderBy("creationDate", "asc")
       .limit(limit)
       .onSnapshot(querySnapshot => {
-        console.debug(`Fetch post comment list: ${postId}`)
+        console.debug(`Fetch post comment list.`)
 
         const docSize = querySnapshot.docs.length
         setHasMore(docSize >= limit)
@@ -42,7 +42,7 @@ function usePostCommentList(postId) {
       })
 
     callback.current = () => {
-      console.debug(`Unsubscribe from post comment list: ${postId}`)
+      console.debug(`Unsubscribe from post comment list.`)
       unsubscribe()
     }
   }, [postId, stop, limit])

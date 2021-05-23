@@ -5,8 +5,8 @@ import useUser from "../hooks/useUser";
 import PostBody from "./PostBody";
 import PostFooter from "./PostFooter";
 
-function Post({postId, expanded = false, className = null}) {
-  const [post, postLoading, postError] = usePost(postId)
+function Post({postId, isExpanded = false, className = null}) {
+  const [post, deletePost, postLoading, postError] = usePost(postId)
   const [user, userLoading, userError] = useUser(post.author)
 
   if (postError || userError) {
@@ -30,7 +30,7 @@ function Post({postId, expanded = false, className = null}) {
     return (
       <div className={className}>
         <PostBody user={user} post={post}/>
-        <PostFooter post={post} expanded={expanded}/>
+        <PostFooter post={post} deletePost={deletePost} isExpanded={isExpanded}/>
       </div>
     )
   }

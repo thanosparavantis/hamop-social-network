@@ -23,7 +23,7 @@ function usePostLikeCount(postId) {
       .collection("likes")
       .where("post", "==", postId)
       .onSnapshot(querySnapshot => {
-        console.debug(`Fetch post like count: ${postId}`)
+        console.debug(`Fetch post like count.`)
         setCount(querySnapshot.size)
       }, error => {
         setError(true)
@@ -31,7 +31,7 @@ function usePostLikeCount(postId) {
       })
 
     callback.current = () => {
-      console.debug(`Unsubscribe from post like count: ${postId}`)
+      console.debug(`Unsubscribe from post like count.`)
       unsubscribe()
     }
   }, [postId])

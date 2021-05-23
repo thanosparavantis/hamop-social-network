@@ -28,7 +28,7 @@ function useUserPostList(userId) {
       .orderBy("creationDate", "desc")
       .limit(limit)
       .onSnapshot(querySnapshot => {
-        console.debug(`Fetch user post list: ${userId}`)
+        console.debug(`Fetch user post list.`)
 
         const docSize = querySnapshot.docs.length
         setHasMore(docSize >= limit)
@@ -40,7 +40,7 @@ function useUserPostList(userId) {
       })
 
     callback.current = () => {
-      console.debug(`Unsubscribe from user post list: ${userId}`)
+      console.debug(`Unsubscribe from user post list.`)
       unsubscribe()
     }
   }, [userId, stop, limit])

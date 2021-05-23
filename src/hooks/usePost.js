@@ -40,6 +40,17 @@ function usePost(postId) {
     }
   }, [postId, cacheKey, getCached, appCache, getFrom])
 
+  const deletePost = useCallback(() => {
+    firebase.firestore()
+      .collection("posts")
+      .doc(postId)
+      .delete()
+      .catch(error => {
+        setError(true)
+        console.error(error)
+      })
+  }, [postId])
+
   useEffect(() => {
     if (!postId || appCache.isCached(cacheKey)) {
       return
@@ -59,7 +70,7 @@ function usePost(postId) {
       .doc(postId)
       .get()
       .then(doc => {
-        console.debug(`Fetch post: ${postId}`)
+        console.debug(`Fetch post.`)
         const data = doc.data()
 
         if (!data) {
@@ -98,6 +109,7 @@ function usePost(postId) {
       content: content,
       creationDate: creationDate,
     },
+    deletePost,
     loading,
     error,
     found,

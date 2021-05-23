@@ -87,7 +87,7 @@ function useUserPostLike(userId, postId) {
       .where("post", "==", postId)
       .get()
       .then(querySnapshot => {
-        console.debug(`Fetch user post like: ${postId}`)
+        console.debug(`Fetch user post like.`)
 
         if (querySnapshot.empty) {
           setHasLiked(false)

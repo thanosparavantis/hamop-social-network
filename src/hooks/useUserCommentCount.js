@@ -51,7 +51,7 @@ function useUserPostCount(userId) {
       .where("author", "==", userId)
       .get()
       .then(querySnapshot => {
-        console.debug(`Fetch user comment count: ${userId}`)
+        console.debug(`Fetch user comment count.`)
         const count = querySnapshot.size
         setCount(count)
         countObj["count"] = count
