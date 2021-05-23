@@ -52,7 +52,7 @@ function usePost(postId) {
       creationDate: undefined
     }
 
-    appCache.addItem(cacheKey, postObj)
+    appCache.addItem(cacheKey, postObj, false)
 
     firebase.firestore()
       .collection("posts")
@@ -77,7 +77,7 @@ function usePost(postId) {
         setCreationDate(creationDate)
         postObj["creationDate"] = creationDate
 
-        appCache.addItem(cacheKey, postObj)
+        appCache.addItem(cacheKey, postObj, false)
       }).catch(error => {
       setError(true)
       console.error(error)

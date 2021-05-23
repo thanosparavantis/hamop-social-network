@@ -54,7 +54,7 @@ function useUser(userId) {
       creationDate: undefined,
     }
 
-    appCache.addItem(cacheKey, userObj)
+    appCache.addItem(cacheKey, userObj, false)
 
     firebase.firestore()
       .collection("users")
@@ -82,7 +82,7 @@ function useUser(userId) {
         setCreationDate(creationDate)
         userObj["creationDate"] = creationDate
 
-        appCache.addItem(cacheKey, userObj)
+        appCache.addItem(cacheKey, userObj, false)
       })
       .catch(error => {
         setError(true)

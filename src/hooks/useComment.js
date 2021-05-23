@@ -51,7 +51,7 @@ function useComment(commentId) {
       creationDate: undefined
     }
 
-    appCache.addItem(cacheKey, commentObj)
+    appCache.addItem(cacheKey, commentObj, false)
 
     firebase.firestore()
       .collection("comments")
@@ -75,7 +75,7 @@ function useComment(commentId) {
         commentObj["content"] = content
         setCreationDate(creationDate)
         commentObj["creationDate"] = creationDate
-        appCache.addItem(cacheKey, commentObj)
+        appCache.addItem(cacheKey, commentObj, false)
       })
       .catch(error => {
         setError(true)

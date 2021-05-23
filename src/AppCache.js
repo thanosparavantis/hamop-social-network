@@ -1,13 +1,13 @@
 export default class AppCache {
-  memory = {}
   listeners = {}
 
-  addItem(itemId, dataObj) {
-    const now = new Date()
-    now.setMinutes(now.getMinutes() + 10)
-    dataObj["validity"] = now.getTime()
+  addItem(itemId, dataObj, expires = true) {
+    if (expires) {
+      const now = new Date()
+      now.setMinutes(now.getMinutes() + 10)
+      dataObj["validity"] = now.getTime()
+    }
 
-    this.memory[itemId] = dataObj
     const dataStr = JSON.stringify(dataObj)
     sessionStorage.setItem(itemId, dataStr)
 
@@ -39,32 +39,21 @@ export default class AppCache {
   }
 
   isCached(itemId) {
-    let dataObj
+    const dataObj = JSON.parse(sessionStorage.getItem(itemId))
 
-    if (this.memory[itemId]) {
-      dataObj = this.memory[itemId]
-    } else {
-      dataObj = JSON.parse(sessionStorage.getItem(itemId))
-
-      if (dataObj === null) {
-        return false
-      }
+    if (dataObj === null) {
+      return false
     }
 
-    const now = new Date()
-
-    if (now.getTime() > dataObj.validity) {
-      return false
+    if (dataObj.validity) {
+      const now = new Date()
+      return now.getTime() <= dataObj.validity
     }
 
     return true
   }
 
   getItem(itemId) {
-    if (this.memory[itemId]) {
-      return this.memory[itemId]
-    } else {
-      return JSON.parse(sessionStorage.getItem(itemId))
-    }
+    return JSON.parse(sessionStorage.getItem(itemId))
   }
 }

@@ -25,7 +25,7 @@ function PostPage() {
 
         <main className="m-5 flex items-center justify-center">
           <div className="container max-w-2xl">
-            <Post postId={post.id} expanded={true}/>
+            <Post postId={post.id} isExpanded={true}/>
           </div>
         </main>
       </>
