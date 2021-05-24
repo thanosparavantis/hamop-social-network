@@ -32,7 +32,7 @@ function PostEditor({topic = null, className = null}) {
 
     createPost({
       content: contentField,
-      topic: topic.id,
+      topic: topic.id === "home" ? null : topic.id,
     })
       .then(result => {
         const data = result.data
