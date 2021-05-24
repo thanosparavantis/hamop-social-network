@@ -9,8 +9,8 @@ function Routes() {
   return (
     <Switch>
       {topics.map(topic => (
-        <Route path={topic.path} exact>
-          <TopicPage topic={topic} key={topic.id}/>
+        <Route path={topic.path} key={topic.id} exact>
+          <TopicPage topic={topic}/>
         </Route>
       ))}
       <Route path="/post/:postId" exact>

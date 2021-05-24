@@ -28,9 +28,10 @@ function PostLikeButton({postId, className = null}) {
 
   return (
     <div className={className}>
-      <button className={`px-3 py-2 text-sm shadow rounded font-bold
+      <button className={`px-3 py-2 text-sm shadow rounded font-bold disabled:cursor-not-allowed
                           ${hasLiked ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600 hover:text-gray-900"}`}
-              onClick={handleClick}>
+              onClick={handleClick}
+              disabled={!authUser.loggedIn}>
         <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
         {likeCount ? likeCount : 0}
       </button>

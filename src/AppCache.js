@@ -9,7 +9,7 @@ export default class AppCache {
     }
 
     const dataStr = JSON.stringify(dataObj)
-    localStorage.setItem(itemId, dataStr)
+    sessionStorage.setItem(itemId, dataStr)
 
     this.invokeListeners(itemId, dataObj)
   }
@@ -39,7 +39,7 @@ export default class AppCache {
   }
 
   isCached(itemId) {
-    const dataObj = JSON.parse(localStorage.getItem(itemId))
+    const dataObj = JSON.parse(sessionStorage.getItem(itemId))
 
     if (dataObj === null) {
       return false
@@ -54,6 +54,6 @@ export default class AppCache {
   }
 
   getItem(itemId) {
-    return JSON.parse(localStorage.getItem(itemId))
+    return JSON.parse(sessionStorage.getItem(itemId))
   }
 }

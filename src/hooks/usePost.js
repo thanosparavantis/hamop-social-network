@@ -9,6 +9,7 @@ function usePost(postId) {
   const [found, setFound] = useState(true)
   const [author, setAuthor] = useState()
   const [content, setContent] = useState()
+  const [topic, setTopic] = useState()
   const [creationDate, setCreationDate] = useState()
   const cacheKey = useMemo(() => {
     return `Post-${postId}`
@@ -17,6 +18,7 @@ function usePost(postId) {
   const getFrom = useCallback(postObj => {
     setAuthor(postObj.author)
     setContent(postObj.content)
+    setTopic(postObj.topic)
     setCreationDate(new Date(postObj.creationDate))
   }, [])
 
@@ -60,6 +62,7 @@ function usePost(postId) {
       id: postId,
       author: undefined,
       content: undefined,
+      topic: undefined,
       creationDate: undefined
     }
 
@@ -80,11 +83,14 @@ function usePost(postId) {
 
         const author = data.author
         const content = data.content
+        const topic = data.topic
         const creationDate = data.creationDate.toDate()
         setAuthor(author)
         postObj["author"] = author
         setContent(content)
         postObj["content"] = content
+        setTopic(topic)
+        postObj["topic"] = topic
         setCreationDate(creationDate)
         postObj["creationDate"] = creationDate
 
@@ -96,11 +102,11 @@ function usePost(postId) {
   }, [postId, cacheKey, appCache])
 
   useEffect(() => {
-    if (author !== undefined && content !== undefined && creationDate !== undefined
+    if (author !== undefined && content !== undefined && topic !== undefined && creationDate !== undefined
     ) {
       setLoading(false)
     }
-  }, [author, content, creationDate])
+  }, [author, content, topic, creationDate])
 
   return [
     {

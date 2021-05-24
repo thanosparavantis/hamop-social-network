@@ -1,6 +1,6 @@
 import PageMeta from "../components/PageMeta";
 import Navbar from "../components/Navbar";
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import usePostTopicList from "../hooks/usePostTopicList";
 import ErrorPage from "./ErrorPage";
 import Post from "../components/Post";
@@ -9,8 +9,11 @@ import NothingHere from "../components/NothingHere";
 import PostEditor from "../components/PostEditor";
 import Sidebar from "../components/Sidebar";
 import TopicPreview from "../components/TopicPreview";
+import UserContext from "../context/UserContext";
+import GuestNote from "../components/GuestNote";
 
 function TopicPage({topic}) {
+  const authUser = useContext(UserContext)
   const [postIds, startPosts, stopPosts,
     loadMorePosts, hasMorePosts, postError] = usePostTopicList(topic)
 
@@ -34,7 +37,11 @@ function TopicPage({topic}) {
             <Sidebar activeTopic={topic} className="hidden md:block"/>
             <TopicPreview topic={topic} className="mb-3 md:hidden"/>
             <main className="col-span-3">
-              <PostEditor topic={topic} className="mb-3"/>
+              {authUser.loggedIn ? (
+                <PostEditor topic={topic} className="mb-3"/>
+              ) : (
+                <GuestNote className="mb-3"/>
+              )}
 
               {postIds.length > 0 ? (
                 <div>

@@ -6,7 +6,6 @@ import usePost from "../hooks/usePost";
 import NotFoundPage from "./NotFoundPage";
 import ErrorPage from "./ErrorPage";
 import LoadingPage from "./LoadingPage";
-import Sidebar from "../components/Sidebar";
 
 function PostPage() {
   const {postId} = useParams()
@@ -25,8 +24,7 @@ function PostPage() {
         <PageMeta/>
 
         <div className="m-5 flex items-center justify-center">
-          <div className="container max-w-4xl grid grid-cols-1 md:grid-cols-4 md:gap-3">
-            <Sidebar className="hidden md:block"/>
+          <div className="container max-w-4xl">
             <Post postId={post.id} isExpanded={true} className="col-span-3"/>
           </div>
         </div>
