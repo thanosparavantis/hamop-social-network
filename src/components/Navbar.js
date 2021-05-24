@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHouseUser, faSignInAlt, faSignOutAlt, faUserCircle} from "@fortawesome/free-solid-svg-icons";
+import {faSignInAlt, faSignOutAlt, faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {useContext, useEffect, useState} from "react";
 import UserContext from "../context/UserContext";
 import topics from "../Topics"
@@ -96,52 +96,12 @@ function Navbar() {
                   </div>
                 </div>
               ) : (
-                <div className="select-none">
-                  <div className={`h-16 md:w-48 w-14 md:px-10 py-5 flex items-center justify-center
-                                 text-center transition-all cursor-pointer select-none
-                                 ${expanded ? "bg-white text-gray-900 border-b shadow-lg" : "hover:underline"}`}
-                       onClick={handleClick}>
-                    <FontAwesomeIcon icon={faUserCircle} className="md:mr-2" size="lg"/>
-                    <div className="hidden md:block">Επισκέπτης</div>
-                  </div>
-
-                  {/* Desktop Guest */}
-                  <div className={`w-48 absolute text-gray-700 shadow-lg rounded-b
-                                 bg-white hidden md:flex flex-col
-                                 transition-all ${expanded ? "opacity-100" : "invisible opacity-0"}`}>
-                    <Link to="/" className="px-10 py-5 border-b hover:underline focus:ring">
-                      <FontAwesomeIcon icon={faHouseUser} className="mr-2"/>
-                      Αρχική
-                    </Link>
-                    <Link to="/" onClick={user.login} className="px-10 py-5 hover:underline focus:ring">
-                      <FontAwesomeIcon icon={faSignInAlt} className="mr-2"/>
-                      Σύνδεση
-                    </Link>
-                  </div>
-
-                  {/* Mobile Guest */}
-                  <div className={`flex md:hidden flex-col fixed left-0 right-0 w-screen
-                                 full-height-adjusted bg-gray-100 text-gray-700 text-lg
-                                 ${expanded ? "opacity-100" : "invisible opacity-0"}`}>
-                    <Link to="/" onClick={user.login}
-                          className="px-10 py-5 border-b bg-white cursor-pointer hover:underline focus:ring">
-                      <FontAwesomeIcon icon={faSignInAlt} className="mr-2"/>
-                      Σύνδεση
-                    </Link>
-                    {topics.map(topic => (
-                      <Link to={topic.path}
-                            key={topic.id}
-                            onClick={closeOnClick}
-                            className="flex items-center px-10 py-5 bg-white border-b hover:underline focus:ring">
-                        <img src={require(`../images/topics/${topic.id}.png`).default}
-                             alt={topic.title}
-                             className="w-8 h-8 mr-3 object-contain"/>
-                        {topic.title}
-                      </Link>
-                    ))}
-                    <div className="flex-grow" onClick={closeOnClick}/>
-                  </div>
-                </div>
+                <button onClick={user.login}
+                        className="h-16 flex items-center justify-center font-bold
+                                   text-center transition-all cursor-pointer select-none hover:underline">
+                  <FontAwesomeIcon icon={faSignInAlt} className="mr-2"/>
+                  <div>Σύνδεση</div>
+                </button>
               )}
             </div>
           )}
