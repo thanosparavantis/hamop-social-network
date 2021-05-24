@@ -1,10 +1,12 @@
-import {useCallback, useState} from "react";
+import {useCallback, useContext, useState} from "react";
 import firebase from "firebase/app";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
 import TextareaAutosize from "react-textarea-autosize";
+import UserContext from "../context/UserContext";
 
 function CommentEditor({postId}) {
+  const authUser = useContext(UserContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [contentField, setContentField] = useState("")
@@ -66,7 +68,7 @@ function CommentEditor({postId}) {
         onKeyPress={handleKeyPress}
         value={contentField}
         maxLength="1000"
-        disabled={loading}
+        disabled={!authUser.loggedIn || loading}
         required={true}/>
 
       <div className="mt-1 flex items-center justify-between flex-col md:flex-row">
@@ -81,7 +83,7 @@ function CommentEditor({postId}) {
         <button className="px-6 py-2 text-sm rounded shadow font-bold text-white hover:bg-green-500 w-full md:w-auto
                            bg-green-400 focus:ring outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleSubmit}
-                disabled={loading || !isContentFieldValid()}>
+                disabled={!authUser.loggedIn || loading || !isContentFieldValid()}>
           {loading ? (
             <>
               <FontAwesomeIcon icon={faCircleNotch} spin={true} className="mr-3"/>
