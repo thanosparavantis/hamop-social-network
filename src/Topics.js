@@ -9,6 +9,7 @@ const topics = [
   {id: "books", title: "Βιβλία", path: "/topic/books"},
   {id: "movies", title: "Ταινίες", path: "/topic/movies"},
   {id: "travel", title: "Ταξίδια", path: "/topic/travel"},
+  {id: "music", title: "Μουσική", path: "/topic/music"},
   {id: "art", title: "Τέχνη", path: "/topic/art"},
   {id: "garden", title: "Κήπος", path: "/topic/garden"},
   {id: "pets", title: "Κατοικίδια", path: "/topic/pets"},
