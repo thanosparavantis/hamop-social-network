@@ -1,18 +1,13 @@
 import GoogleFontLoader from "react-google-font-loader";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import firebase from "firebase/app";
 import UserContext from "./context/UserContext";
 import LoadingPage from "./pages/LoadingPage";
-import HomeGuestPage from "./pages/HomeGuestPage";
-import ProfilePage from "./pages/ProfilePage";
 import ErrorPage from "./pages/ErrorPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import CommunityPage from "./pages/CommunityPage";
-import HomePage from "./pages/HomePage";
 import AppCacheContext from "./context/AppCacheContext";
 import AppCache from "./AppCache";
-import PostPage from "./pages/PostPage";
+import Routes from "./Routes";
 
 function App() {
   const [error, setError] = useState(false)
@@ -102,7 +97,7 @@ function App() {
       .collection("users")
       .doc(userId)
       .onSnapshot(doc => {
-        console.debug("Fetch logged in user.")
+          console.debug("Fetch logged in user.")
           const newUser = doc.data()
 
           if (newUser) {
@@ -193,23 +188,7 @@ function App() {
         ]}/>
         <Router>
           {user.valid && !error ? (
-            <Switch>
-              <Route path="/" exact>
-                {user.loggedIn ? <HomePage/> : <HomeGuestPage/>}
-              </Route>
-              <Route path="/community" exact>
-                <CommunityPage/>
-              </Route>
-              <Route path="/post/:postId" exact>
-                <PostPage/>
-              </Route>
-              <Route path="/:username" exact>
-                <ProfilePage/>
-              </Route>
-              <Route path="*">
-                <NotFoundPage/>
-              </Route>
-            </Switch>
+            <Routes/>
           ) : (
             <>
               {error ? <ErrorPage/> : <LoadingPage/>}

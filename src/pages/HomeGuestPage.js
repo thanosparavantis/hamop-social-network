@@ -13,7 +13,7 @@ function HomeGuestPage() {
       <Navbar/>
       <PageMeta title="Home"/>
       <main className="m-5 flex items-center justify-center">
-        <div className="container max-w-2xl">
+        <div className="container max-w-4xl">
           <section className="h-56 bg-gray-100">
             <img src="/social.jpg"
                  alt="Φωτογραφία από την Ακρόπολη στην Αθήνα"

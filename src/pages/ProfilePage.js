@@ -11,6 +11,8 @@ import {useEffect} from "react";
 import LoadingPage from "./LoadingPage";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
+import NothingHere from "../components/NothingHere";
+import Sidebar from "../components/Sidebar";
 
 
 function ProfilePage() {
@@ -39,32 +41,33 @@ function ProfilePage() {
       <>
         <PageMeta title={user.displayName}/>
         <Navbar/>
-        <main className="m-5 flex items-center justify-center">
-          <div className="container max-w-2xl">
-            <UserCard userId={user.uid}/>
+        <div className="m-5 flex items-center justify-center">
+          <div className="container max-w-4xl grid grid-cols-1 md:grid-cols-4 md:gap-3">
+            <Sidebar className="hidden md:block"/>
+            <main className="col-span-3">
+              <UserCard userId={user.uid}/>
 
-            {postIds.length > 0 ? (
-              <div className="mt-3">
-                {postIds.map(postId => {
-                  return <Post postId={postId} key={postId} className="mb-3"/>
-                })}
+              {postIds.length > 0 ? (
+                <div className="mt-3">
+                  {postIds.map(postId => {
+                    return <Post postId={postId} key={postId} className="mb-3"/>
+                  })}
 
-                { hasMorePosts && (
-                  <button className="w-full border-t px-5 py-6 bg-white rounded shadow font-bold text-blue-600 hover:text-blue-500"
-                          onClick={loadMorePosts}>
-                    <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                    Εμφάνιση περισσότερων
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="mt-3 bg-white px-5 py-3 rounded shadow">
-                Δεν φαίνεται να υπάρχει κάτι εδώ.
-              </div>
-            )}
+                  {hasMorePosts && (
+                    <button
+                      className="w-full border-t px-5 py-6 bg-white rounded shadow font-bold text-blue-600 hover:text-blue-500"
+                      onClick={loadMorePosts}>
+                      <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
+                      Εμφάνιση περισσότερων
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <NothingHere className="mt-3"/>
+              )}
+            </main>
           </div>
-
-        </main>
+        </div>
       </>
     )
   }

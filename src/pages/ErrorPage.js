@@ -6,16 +6,15 @@ function ErrorPage() {
     <>
       <PageMeta/>
       <Navbar/>
-      <main className="flex items-center justify-center flex-col text-center" style={{height: "calc(100vh - 64px)"}}>
-        <div className="mb-5">
-          <h1 className="text-3xl text-gray-900 font-bold mb-2">
-            hamop.gr
+      <main className="full-height-adjusted flex items-center justify-center flex-col text-center">
+        <div className="font-bold">
+          <h1 className="text-3xl text-gray-900 mb-2">
+            Hamop.gr
           </h1>
-          <p className="text-xl text-gray-800">
+          <p className="text-xl text-red-600">
             Δεν μπορέσαμε να επεξεργαστούμε το αίτημά σας.
           </p>
         </div>
-
       </main>
     </>
   )

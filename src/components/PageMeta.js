@@ -6,7 +6,7 @@ function PageMeta({title}) {
       <body className="font-hamop bg-gradient-to-r from-gray-100 to-gray-200"/>
 
       { title && (
-        <title>{title} - hamop.gr</title>
+        <title>{title} - Hamop.gr</title>
       )}
     </Helmet>
   )

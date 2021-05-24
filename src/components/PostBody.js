@@ -4,7 +4,7 @@ import Linkify from "react-linkify";
 
 function PostBody({user, post}) {
   return (
-    <div className="flex flex-col align-top bg-white p-5 rounded-t shadow">
+    <article className="flex flex-col align-top bg-white p-5 rounded-t shadow">
       <div className="flex items-center flex-shrink-0">
         <Link to={`/${user.username}`} className="block hover:opacity-80">
           <img src={user.photoURL} alt={user.username} className="w-12 h-12 rounded shadow-lg border"/>
@@ -29,7 +29,7 @@ function PostBody({user, post}) {
           </a>
         )}>{post.content}</Linkify>
       </div>
-    </div>
+    </article>
   )
 }
 

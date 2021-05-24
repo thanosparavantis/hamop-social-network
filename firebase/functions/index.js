@@ -61,11 +61,14 @@ exports.createPost = functions.https.onCall((data, context) => {
     )
   }
 
+  let topicField = data.topic ? data.topic : null
+
   return admin.firestore()
     .collection("posts")
     .add({
       author: context.auth.uid,
       content: contentField,
+      topic: topicField,
       creationDate: admin.firestore.Timestamp.now(),
     })
     .then(() => {

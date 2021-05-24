@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faTimes} from "@fortawesome/free-solid-svg-icons";
 import TextareaAutosize from 'react-textarea-autosize';
 
-function PostEditor({className = null}) {
+function PostEditor({topic = null, className = null}) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [contentField, setContentField] = useState("")
@@ -30,7 +30,10 @@ function PostEditor({className = null}) {
 
     const createPost = firebase.functions().httpsCallable("createPost")
 
-    createPost({content: contentField})
+    createPost({
+      content: contentField,
+      topic: topic.id,
+    })
       .then(result => {
         const data = result.data
 
@@ -43,7 +46,7 @@ function PostEditor({className = null}) {
         setLoading(false)
         setError(error.message)
       })
-  }, [isContentFieldValid, contentField])
+  }, [isContentFieldValid, contentField, topic])
 
   return (
     <form action="#" method="POST" className={`flex flex-col ${className}`}>
@@ -58,7 +61,8 @@ function PostEditor({className = null}) {
         disabled={loading}
         required={true}/>
 
-      <div className="bg-gray-100 px-5 py-2 shadow border-t rounded-b flex items-center justify-between flex-col md:flex-row">
+      <div
+        className="bg-gray-100 px-5 py-2 shadow border-t rounded-b flex items-center justify-between flex-col md:flex-row">
         <div>
           {error && (
             <div className="font-bold mb-3 text-red-600 md:mb-0 text-center md:text-left">
