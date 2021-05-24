@@ -10,6 +10,8 @@ const topics = [
   {id: "art", title: "Τέχνη", path: "/topic/art"},
   {id: "garden", title: "Κήπος", path: "/topic/garden"},
   {id: "pets", title: "Κατοικίδια", path: "/topic/pets"},
+  {id: "hobbies", title: "Χόμπι", path: "/topic/hobbies"},
+  {id: "support", title: "Υποστήριξη", path: "/support"},
 ]
 
 export default topics
