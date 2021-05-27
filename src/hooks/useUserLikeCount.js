@@ -53,11 +53,12 @@ function useUserLikeCount(userId) {
       .where("author", "==", userId)
       .get()
       .then(querySnapshot => {
-        console.debug(`Fetch user post count.`)
+        console.debug(`Fetch posts for user like count.`)
         postIds = querySnapshot.docs.map(doc => doc.id)
         return firebase.firestore().collection("likes").get()
       })
       .then(querySnapshot => {
+        console.debug(`Fetch user like count.`)
         const count = querySnapshot.docs.filter(doc => {
           const like = doc.data()
           return postIds.includes(like.post)
