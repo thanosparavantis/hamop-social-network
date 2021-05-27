@@ -113,6 +113,7 @@ function usePost(postId) {
       id: postId,
       author: author,
       content: content,
+      topic: topic,
       creationDate: creationDate,
     },
     deletePost,

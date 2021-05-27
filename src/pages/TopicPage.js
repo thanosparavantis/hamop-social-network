@@ -32,11 +32,11 @@ function TopicPage({topic}) {
       <>
         <PageMeta title={topic.title}/>
         <Navbar/>
-        <div className="m-5 flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <div className="container max-w-4xl grid grid-cols-1 md:grid-cols-4 md:gap-3">
             <Sidebar activeTopic={topic} className="hidden md:block"/>
-            <TopicPreview topic={topic} className="mb-3 md:hidden"/>
-            <main className="col-span-3">
+            <TopicPreview topic={topic} className="mx-5 mt-5 mb-3 md:hidden"/>
+            <main className="mx-5 md:mt-5 md:mx-0 col-span-3">
               {authUser.loggedIn ? (
                 <PostEditor topic={topic} className="mb-3"/>
               ) : (

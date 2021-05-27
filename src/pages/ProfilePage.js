@@ -41,10 +41,10 @@ function ProfilePage() {
       <>
         <PageMeta title={user.displayName}/>
         <Navbar/>
-        <div className="m-5 flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <div className="container max-w-4xl grid grid-cols-1 md:grid-cols-4 md:gap-3">
             <Sidebar className="hidden md:block"/>
-            <main className="col-span-3">
+            <main className="mt-5 mx-5 md:mx-0 col-span-3">
               <UserCard userId={user.uid}/>
 
               {postIds.length > 0 ? (

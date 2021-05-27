@@ -5,3 +5,7 @@
 .full-height-adjusted {
   height: calc(100vh - 64px)
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -1,26 +1,24 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faExclamationTriangle, faStar} from "@fortawesome/free-solid-svg-icons";
-import useUserPostCount from "../hooks/useUserPostCount";
-import useUserCommentCount from "../hooks/useUserCommentCount";
+import useUserLikeCount from "../hooks/useUserLikeCount";
 
 function StarsBadge({userId, className = null}) {
-  const [postCount, postCountLoading, postCountError] = useUserPostCount(userId)
-  const [commentCount, commentCountLoading, commentCountError] = useUserCommentCount(userId)
+  const [likeCount, likeCountLoading, likeCountError] = useUserLikeCount(userId)
 
-  if (postCountError || commentCountError) {
+  if (likeCountError) {
     return (
       <div className={className}>
         <FontAwesomeIcon icon={faExclamationTriangle} className="text-red-500"/>
       </div>
     )
-  } else if (postCountLoading || commentCountLoading) {
+  } else if (likeCountLoading) {
     return (
       <div className={className}>
         <FontAwesomeIcon icon={faCircleNotch} spin={true}/>
       </div>
     )
   } else {
-    const stars = postCount + commentCount
+    const stars = likeCount
     const starDisplay = stars.toLocaleString("el-GR")
     let bgColor = "bg-gray-200"
 
@@ -34,7 +32,7 @@ function StarsBadge({userId, className = null}) {
 
     return (
       <div className={className}>
-        <div className={`text-sm md:text-xs font-bold px-1 shadow rounded text-gray-900 select-none ${bgColor}`}>
+        <div className={`text-sm font-bold px-1 shadow rounded text-gray-900 select-none ${bgColor}`}>
           {starDisplay}
           <FontAwesomeIcon icon={faStar} size="sm" className="ml-1"/>
         </div>

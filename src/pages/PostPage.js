@@ -22,7 +22,6 @@ function PostPage() {
       <>
         <Navbar/>
         <PageMeta/>
-
         <div className="m-5 flex items-center justify-center">
           <div className="container max-w-4xl">
             <Post postId={post.id} isExpanded={true} className="col-span-3"/>
