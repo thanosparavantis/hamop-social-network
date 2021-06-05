@@ -3,15 +3,11 @@ import TimeAgo from "timeago-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
-import useUserPostCount from "../hooks/useUserPostCount";
-import useUserCommentCount from "../hooks/useUserCommentCount";
 
 function UserCard({userId, className = null}) {
   const [user, userLoading, userError] = useUser(userId)
-  const [postCount, postCountLoading, postCountError] = useUserPostCount(userId)
-  const [commentCount, commentCountLoading, commentCountError] = useUserCommentCount(userId)
 
-  if (userError || postCountError || commentCountError) {
+  if (userError) {
     return (
       <div className={className}>
         <div className="bg-white font-bold p-5 rounded shadow text-red-600 text-center">
@@ -20,7 +16,7 @@ function UserCard({userId, className = null}) {
         </div>
       </div>
     )
-  } else if (userLoading || postCountLoading || commentCountLoading) {
+  } else if (userLoading) {
     return (
       <div className={className}>
         <div className="bg-white p-5 rounded shadow text-center font-bold text-gray-600">
@@ -43,25 +39,25 @@ function UserCard({userId, className = null}) {
               Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
             </div>
             <div className="flex items-center flex-col md:flex-row text-sm text-gray-600">
-              {postCount > 0 && (
                 <div>
-                  <strong>{postCount}</strong> {postCount > 1 ? "δημοσιεύσεις" : "δημοσίευση"}
+                  <strong>{user.postCount}</strong> {user.postCount !== 1 ? "δημοσιεύσεις" : "δημοσίευση"}
                 </div>
-              )}
 
-              {postCount > 0 && commentCount > 0 && (
-                <div className="mx-2 hidden md:block">
-                  &middot;
+              <div className="mx-2 hidden md:block">
+                &middot;
+              </div>
+
+                <div>
+                  <strong>{user.commentCount}</strong> {user.commentCount !== 1 ? "σχόλια" : "σχόλιο"}
                 </div>
-              )}
 
-              {commentCount > 0 && (
-                <>
-                  <div>
-                    <strong>{commentCount}</strong> {commentCount > 1 ? "σχόλια" : "σχόλιο"}
-                  </div>
-                </>
-              )}
+              <div className="mx-2 hidden md:block">
+                &middot;
+              </div>
+
+                <div>
+                  <strong>{user.likeCount}</strong> {user.likeCount !== 1 ? "likes" : "like"}
+                </div>
             </div>
           </div>
         </Link>

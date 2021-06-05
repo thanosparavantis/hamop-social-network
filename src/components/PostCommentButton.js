@@ -1,19 +1,11 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faComments} from "@fortawesome/free-solid-svg-icons";
 import {useCallback, useEffect, useState} from "react";
-import usePostCommentCount from "../hooks/usePostCommentCount";
+import usePost from "../hooks/usePost";
 
 function PostCommentButton({postId, onOpen, onClose, isOpen = false, className = null}) {
   const [open, setOpen] = useState(isOpen)
-  const [commentCount, startCommentCount, stopCommentCount] = usePostCommentCount(postId)
-
-  useEffect(() => {
-    startCommentCount()
-
-    return () => {
-      stopCommentCount()
-    }
-  }, [startCommentCount, stopCommentCount])
+  const [post, , postLoading, ,] = usePost(postId)
 
   const handleClick = useCallback(() => {
     setOpen(oldOpen => !oldOpen)
@@ -34,16 +26,16 @@ function PostCommentButton({postId, onOpen, onClose, isOpen = false, className =
               onClick={handleClick}
       >
         <FontAwesomeIcon icon={faComments} className="mr-2"/>
-        {!commentCount && (
+        {(postLoading || !post.commentCount) && (
           <>Σχόλια</>
         )}
 
-        {commentCount === 1 && (
-          <>{commentCount} σχόλιο</>
+        {post.commentCount === 1 && (
+          <>{post.commentCount} σχόλιο</>
         )}
 
-        {commentCount > 1 && (
-          <>{commentCount} σχόλια</>
+        {post.commentCount > 1 && (
+          <>{post.commentCount} σχόλια</>
         )}
       </button>
     </div>

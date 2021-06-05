@@ -10,6 +10,8 @@ function usePost(postId) {
   const [author, setAuthor] = useState()
   const [content, setContent] = useState()
   const [topic, setTopic] = useState()
+  const [commentCount, setCommentCount] = useState()
+  const [likeCount, setLikeCount] = useState()
   const [creationDate, setCreationDate] = useState()
   const cacheKey = useMemo(() => {
     return `Post-${postId}`
@@ -19,6 +21,8 @@ function usePost(postId) {
     setAuthor(postObj.author)
     setContent(postObj.content)
     setTopic(postObj.topic)
+    setCommentCount(postObj.commentCount)
+    setLikeCount(postObj.likeCount)
     setCreationDate(new Date(postObj.creationDate))
   }, [])
 
@@ -63,10 +67,12 @@ function usePost(postId) {
       author: undefined,
       content: undefined,
       topic: undefined,
+      commentCount: undefined,
+      likeCount: undefined,
       creationDate: undefined
     }
 
-    appCache.addItem(cacheKey, postObj, false)
+    appCache.addItem(cacheKey, postObj)
 
     firebase.firestore()
       .collection("posts")
@@ -84,6 +90,8 @@ function usePost(postId) {
         const author = data.author
         const content = data.content
         const topic = data.topic
+        const commentCount = data.commentCount ? data.commentCount : 0
+        const likeCount = data.likeCount ? data.likeCount : 0
         const creationDate = data.creationDate.toDate()
         setAuthor(author)
         postObj["author"] = author
@@ -91,10 +99,14 @@ function usePost(postId) {
         postObj["content"] = content
         setTopic(topic)
         postObj["topic"] = topic
+        setCommentCount(commentCount)
+        postObj["commentCount"] = commentCount
+        setLikeCount(likeCount)
+        postObj["likeCount"] = likeCount
         setCreationDate(creationDate)
         postObj["creationDate"] = creationDate
 
-        appCache.addItem(cacheKey, postObj, false)
+        appCache.addItem(cacheKey, postObj)
       }).catch(error => {
       setError(true)
       console.error(error)
@@ -102,11 +114,12 @@ function usePost(postId) {
   }, [postId, cacheKey, appCache])
 
   useEffect(() => {
-    if (author !== undefined && content !== undefined && topic !== undefined && creationDate !== undefined
+    if (author !== undefined && content !== undefined && topic !== undefined
+      && creationDate !== undefined && commentCount !== undefined && likeCount !== undefined
     ) {
       setLoading(false)
     }
-  }, [author, content, topic, creationDate])
+  }, [author, content, topic, commentCount, likeCount, creationDate])
 
   return [
     {
@@ -114,6 +127,8 @@ function usePost(postId) {
       author: author,
       content: content,
       topic: topic,
+      commentCount: commentCount,
+      likeCount: likeCount,
       creationDate: creationDate,
     },
     deletePost,

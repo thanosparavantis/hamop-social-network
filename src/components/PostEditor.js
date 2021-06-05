@@ -30,7 +30,10 @@ function PostEditor({topic = null, className = null}) {
     setError(false)
     setLoading(true)
 
-    const createPost = firebase.functions().httpsCallable("createPost")
+    const createPost = firebase
+      .app()
+      .functions("europe-west1")
+      .httpsCallable("createPost")
 
     createPost({
       content: contentField,

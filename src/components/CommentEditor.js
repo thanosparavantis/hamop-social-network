@@ -32,7 +32,10 @@ function CommentEditor({postId}) {
     setError(false)
     setLoading(true)
 
-    const createPost = firebase.functions().httpsCallable("createComment")
+    const createPost = firebase
+      .app()
+      .functions("europe-west1")
+      .httpsCallable("createComment")
 
     createPost({post: postId, content: contentField})
       .then(result => {
