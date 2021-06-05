@@ -9,10 +9,9 @@ import useUserPostList from "../hooks/useUserPostList";
 import useUserFromUsername from "../hooks/useUserFromUsername";
 import {useEffect} from "react";
 import LoadingPage from "./LoadingPage";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowDown} from "@fortawesome/free-solid-svg-icons";
 import NothingHere from "../components/NothingHere";
 import Sidebar from "../components/Sidebar";
+import LoadMore from "../components/LoadMore";
 
 
 function ProfilePage() {
@@ -54,12 +53,7 @@ function ProfilePage() {
                   })}
 
                   {hasMorePosts && (
-                    <button
-                      className="w-full border-t px-5 py-6 bg-white rounded shadow font-bold text-blue-600 hover:text-blue-500"
-                      onClick={loadMorePosts}>
-                      <FontAwesomeIcon icon={faArrowDown} className="mr-2"/>
-                      Εμφάνιση περισσότερων
-                    </button>
+                    <LoadMore onClick={loadMorePosts} className="mb-3"/>
                   )}
                 </div>
               ) : (

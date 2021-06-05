@@ -60,7 +60,7 @@ function CommentEditor({postId}) {
     <form action="#" method="POST" className="bg-gray-100 shadow border-t rounded-b px-5 py-4">
       <TextareaAutosize
         className="h-16 w-full text-sm border p-3 bg-white disabled:opacity-50
-                   text-gray-900 focus:ring outline-none resize-none"
+                   text-gray-900 focus:ring outline-none resize-none rounded"
         minRows="2"
         name="content"
         placeholder="Σχολίασε τη δημοσίευση..."

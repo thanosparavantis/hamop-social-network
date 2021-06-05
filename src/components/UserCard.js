@@ -3,7 +3,6 @@ import TimeAgo from "timeago-react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
-import StarsBadge from "./StarsBadge";
 import useUserPostCount from "../hooks/useUserPostCount";
 import useUserCommentCount from "../hooks/useUserCommentCount";
 
@@ -37,12 +36,9 @@ function UserCard({userId, className = null}) {
                          justify-center md:justify-start bg-white p-5 rounded shadow focus:ring">
           <img src={user.photoURL} alt={user.username} className="w-20 h-20 rounded shadow-lg border"/>
           <div className="mt-3 md:mt-0 md:ml-5">
-            <div className="flex items-center justify-center md:justify-start
-                            mb-3 text-gray-900 font-bold leading-none">
-              <StarsBadge userId={userId} className="mr-2 hidden md:block"/>
+            <div className="mb-2 text-gray-900 font-bold leading-none">
               {user.displayName}
             </div>
-            <StarsBadge userId={userId} className="flex items-center justify-center mb-2 block md:hidden"/>
             <div className="text-sm text-gray-600">
               Γράφτηκε <TimeAgo datetime={user.creationDate} locale="el"/>
             </div>

@@ -41,7 +41,8 @@ function PostFooter({post, deletePost, isExpanded = false}) {
   } else {
     return (
       <>
-        <div className="shadow px-5 py-2 bg-white border-t flex items-center justify-between">
+        <div className={`shadow px-5 py-2 bg-white border-t
+                         flex items-center justify-between ${expanded ? "" : "rounded-b"}`}>
           <div className="flex items-center">
             <PostLikeButton postId={post.id} className="mr-2"/>
             <PostCommentButton postId={post.id} onOpen={onCommentsOpen} onClose={onCommentsClose} isOpen={expanded}/>

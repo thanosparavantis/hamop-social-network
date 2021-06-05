@@ -50,7 +50,7 @@ function TopicPage({topic}) {
                   })}
 
                   {hasMorePosts && (
-                    <LoadMore onClick={loadMorePosts}/>
+                    <LoadMore onClick={loadMorePosts} className="mb-3"/>
                   )}
                 </div>
               ) : (
